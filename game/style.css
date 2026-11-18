@@ -1,0 +1,208 @@
+/* PUERTO DEL SOL — HUD + menus. One committed sunset palette:
+   coral, gold, dusk purple, warm cream. Fonts are OFL, vendored under
+   fonts/ (see FONTS.md). */
+
+@font-face {
+  font-family: 'Passion One';
+  src: url('fonts/passion-one-bold.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('fonts/barlow-condensed-semibold.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Yellowtail';
+  src: url('fonts/yellowtail.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #14101c; }
+body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff; }
+#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* --- HUD ------------------------------------------------------------ */
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+#hud.dim { opacity: 0.25; }
+#hud.hidden { display: none; }
+
+#hud-top-right { position: absolute; top: 16px; right: 20px; text-align: right; }
+#hud-money {
+  font-family: 'Passion One', sans-serif; font-size: 34px; letter-spacing: 1px;
+  color: #7dd87d; text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+#hud-stars { font-size: 26px; letter-spacing: 4px; line-height: 1.2; }
+#hud-stars .star.on { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.7); }
+#hud-stars .star.off { color: rgba(255,255,255,0.25); }
+
+#hud-bottom-left { position: absolute; left: 18px; bottom: 18px; }
+#radar { display: block; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.5); }
+.bars { margin-top: 8px; width: 160px; }
+.bar { height: 7px; background: rgba(0,0,0,0.55); border-radius: 4px; margin-top: 4px; overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 4px; transition: width 0.2s; }
+.bar .fill.health { background: #2ecc71; }
+.bar .fill.health.low { background: #ff4444; }
+.bar .fill.armor { background: #4a90d9; }
+.bar .fill.rep { background: #f5c518; }
+
+#hud-bottom-right { position: absolute; right: 20px; bottom: 18px; text-align: right; }
+#hud-speed { font-family: 'Passion One', sans-serif; font-size: 30px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+#hud-speed span { font-size: 14px; font-family: 'Barlow Condensed', sans-serif; color: rgba(255,255,255,0.7); margin-left: 4px; }
+.weapon-row { display: flex; align-items: flex-end; gap: 10px; justify-content: flex-end; }
+#weapon-icon { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+#hud-ammo { font-family: 'Passion One', sans-serif; font-size: 26px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+
+/* Transient elements: invisible until .show, then fade out. */
+.transient { opacity: 0; transition: opacity 0.35s; }
+.transient.show { opacity: 1; }
+
+#hud-objective {
+  position: absolute; top: 16px; left: 20px; font-size: 21px; font-weight: 600;
+  letter-spacing: 0.5px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  display: flex; align-items: center; gap: 8px;
+}
+.obj-sq { display: inline-block; width: 12px; height: 12px; border-radius: 2px; }
+#hud-help {
+  position: absolute; top: 48px; left: 20px; font-size: 16px; color: rgba(255,255,255,0.75);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+#hud-subtitle {
+  position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; max-width: 560px;
+  background: rgba(10, 8, 18, 0.72); border-radius: 8px; padding: 8px 14px 8px 8px;
+  font-size: 18px; line-height: 1.25;
+}
+#hud-subtitle img { width: 44px; height: 55px; border-radius: 5px; object-fit: cover; flex: none; }
+#hud-namecard {
+  position: absolute; right: 20px; bottom: 150px; text-align: right;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.nc-name { font-family: 'Yellowtail', cursive; font-size: 44px; color: #ffd27a; line-height: 1; }
+.nc-sub { font-size: 17px; letter-spacing: 2px; color: rgba(255,255,255,0.85); text-transform: uppercase; }
+#hud-radio {
+  position: absolute; left: 50%; top: 16px; transform: translateX(-50%);
+  font-size: 18px; background: rgba(10,8,18,0.6); border-radius: 20px; padding: 5px 16px;
+  display: flex; gap: 8px; align-items: center;
+}
+#hud-radio .radio-mark { color: #f5c518; }
+#hud-radio i { color: rgba(255,255,255,0.7); font-style: normal; }
+#hud-popup {
+  position: absolute; left: 50%; top: 110px; transform: translateX(-50%);
+  font-family: 'Passion One', sans-serif; font-size: 26px; letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+#hud-repfloat {
+  position: absolute; left: 190px; bottom: 60px; font-family: 'Passion One', sans-serif;
+  font-size: 20px; color: #f5c518; text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+#hud-missioncard {
+  position: absolute; left: 50%; top: 34%; transform: translate(-50%, -50%);
+  text-align: center; text-shadow: 0 3px 12px rgba(0,0,0,0.9);
+}
+.mc-title { font-family: 'Passion One', sans-serif; font-size: 54px; letter-spacing: 2px; color: #ffd27a; }
+.mc-sub { font-size: 20px; color: rgba(255,255,255,0.9); }
+#hud-bigcard {
+  position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+  text-align: center; text-shadow: 0 4px 16px rgba(0,0,0,0.9);
+}
+.big-title { font-family: 'Passion One', sans-serif; font-size: 84px; letter-spacing: 4px; color: #fff; }
+.big-title.gold { color: #ffd700; }
+.big-title.red { color: #ff4444; }
+.big-sub { font-size: 24px; color: rgba(255,255,255,0.9); }
+
+#crosshair { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+#crosshair .ch-h { position: absolute; left: -11px; top: -1px; width: 22px; height: 2px; background: rgba(255,255,255,0.9); box-shadow: 0 0 4px rgba(0,0,0,0.8); }
+#crosshair .ch-v { position: absolute; left: -1px; top: -11px; width: 2px; height: 22px; background: rgba(255,255,255,0.9); box-shadow: 0 0 4px rgba(0,0,0,0.8); }
+#crosshair .ch-dot { position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; border-radius: 50%; background: #ffd700; }
+
+#boot-error {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 99; padding: 10px 16px;
+  background: #a00; color: #fff; font: 16px monospace; white-space: pre-wrap;
+}
+
+/* --- Screens ---------------------------------------------------------- */
+.screen { position: fixed; inset: 0; z-index: 20; display: none; }
+.screen.show { display: flex; }
+
+.menu-btn {
+  pointer-events: auto; cursor: pointer; display: block; width: 100%;
+  font-family: 'Passion One', sans-serif; font-size: 22px; letter-spacing: 2px;
+  color: #fff; background: rgba(20, 16, 28, 0.72); border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 6px; padding: 10px 18px; margin-top: 10px; text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+.menu-btn:hover { background: rgba(255, 106, 61, 0.85); border-color: #ffd27a; }
+.menu-btn.primary { background: #ff6a3d; border-color: #ffd27a; }
+.menu-btn.primary:hover { background: #ff7d54; }
+.menu-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+/* Title: the 3D panorama shows through; a dark gradient from the left
+   keeps the text legible. Logo left, cast right, menu under the logo. */
+#screen-title { background: linear-gradient(90deg, rgba(10,8,18,0.82) 0%, rgba(10,8,18,0.45) 42%, rgba(10,8,18,0.05) 70%); }
+.title-shade { display: none; }
+.title-left { flex: 1; padding: 48px 0 40px 56px; display: flex; flex-direction: column; justify-content: center; max-width: 640px; }
+.logo-sun {
+  width: 74px; height: 74px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #fff2c8 0%, #ffd27a 38%, #ff6a3d 72%, rgba(255,106,61,0) 78%);
+  margin-bottom: 14px;
+}
+.logo-kicker { font-size: 15px; letter-spacing: 4px; color: #ffd27a; }
+.logo {
+  font-family: 'Passion One', sans-serif; font-size: 104px; line-height: 0.88;
+  letter-spacing: 1px; margin: 8px 0 10px;
+  background: linear-gradient(180deg, #fff2c8 0%, #ffd27a 45%, #ff6a3d 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
+}
+.tagline { font-family: 'Yellowtail', cursive; font-size: 26px; color: #ffe9c4; margin-bottom: 22px; }
+.menu { width: 300px; }
+#continue-info { margin-top: 10px; font-size: 15px; color: rgba(255,255,255,0.65); }
+.title-right { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 40px 40px 0; }
+.cast-label { font-size: 15px; letter-spacing: 4px; color: #ffd27a; text-align: right; margin-bottom: 10px; }
+#title-cast { display: flex; gap: 12px; justify-content: flex-end; }
+.cast-card { width: 104px; text-align: center; }
+.cast-card img { width: 104px; height: 130px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,210,122,0.5); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+.cast-name { font-family: 'Passion One', sans-serif; font-size: 19px; margin-top: 6px; }
+.cast-role { font-size: 13px; letter-spacing: 1px; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+
+/* City map */
+#screen-map { background: rgba(10, 8, 18, 0.88); align-items: center; justify-content: center; }
+.map-wrap { display: flex; gap: 20px; width: 1180px; max-width: 96vw; max-height: 94vh; }
+.map-left { flex: none; }
+.map-title { font-family: 'Passion One', sans-serif; font-size: 30px; letter-spacing: 2px; margin-bottom: 8px; }
+.map-title span { color: #ffd27a; }
+#map-canvas { border-radius: 10px; border: 2px solid rgba(255,210,122,0.4); width: 640px; height: 560px; max-height: 68vh; }
+.map-buttons { display: flex; gap: 10px; margin-top: 10px; }
+.map-buttons .menu-btn { margin-top: 0; text-align: center; }
+.map-right { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.map-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; }
+.map-card-title { font-family: 'Passion One', sans-serif; font-size: 19px; letter-spacing: 2px; color: #ffd27a; margin-bottom: 6px; }
+.job { display: flex; justify-content: space-between; font-size: 17px; padding: 2px 0; }
+.job.done { color: #7dd87d; }
+.job.current { color: #ffd700; }
+.job.locked { color: rgba(255,255,255,0.55); }
+.stat-rows div { display: flex; justify-content: space-between; font-size: 17px; padding: 1px 0; }
+.stat-rows span { color: rgba(255,255,255,0.7); }
+.save-title { font-family: 'Passion One', sans-serif; font-size: 19px; letter-spacing: 2px; }
+.save-pct { font-family: 'Passion One', sans-serif; font-size: 30px; color: #ffd700; }
+.save-sub { font-size: 15px; color: rgba(255,255,255,0.7); }
+.skill { display: flex; justify-content: space-between; align-items: center; font-size: 16px; padding: 2px 0; }
+.pips { display: flex; gap: 4px; }
+.pips i { width: 18px; height: 10px; border-radius: 2px; background: rgba(255,255,255,0.18); display: block; }
+.pips i.on { background: #f5c518; }
+.cur-name { font-family: 'Passion One', sans-serif; font-size: 24px; color: #ffd27a; }
+.cur-stage { font-size: 17px; }
+.cur-reward { font-size: 15px; color: #7dd87d; }
+
+/* Pause + controls */
+#screen-pause, #screen-controls { background: rgba(10, 8, 18, 0.78); align-items: center; justify-content: center; }
+.pause-box, .controls-box { width: 420px; background: rgba(20,16,28,0.92); border: 1px solid rgba(255,210,122,0.35); border-radius: 12px; padding: 28px; }
+.pause-title { font-family: 'Passion One', sans-serif; font-size: 44px; letter-spacing: 3px; text-align: center; margin-bottom: 8px; }
+.controls-box { width: 560px; }
+.controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin: 14px 0; }
+.controls-grid div { display: flex; justify-content: space-between; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px; }
+.controls-grid b { color: #ffd27a; }
+.controls-grid span { color: rgba(255,255,255,0.8); }
+.controls-note { font-size: 17px; color: rgba(255,255,255,0.85); line-height: 1.35; margin: 6px 0 12px; }
