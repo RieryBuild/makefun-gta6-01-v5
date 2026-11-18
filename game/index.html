@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PUERTO DEL SOL — Make GTA 6</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="vendor/three.min.js"></script>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- HUD: icon-first. Permanent elements are icons, bars, bare numbers.
+     Everything else is transient and fades. -->
+<div id="hud">
+  <div id="hud-top-right">
+    <div id="hud-money">$0</div>
+    <div id="hud-stars"></div>
+  </div>
+
+  <div id="hud-bottom-left">
+    <canvas id="radar" width="160" height="160"></canvas>
+    <div class="bars">
+      <div class="bar"><div id="bar-health" class="fill health"></div></div>
+      <div class="bar"><div id="bar-armor" class="fill armor"></div></div>
+      <div class="bar"><div id="bar-rep" class="fill rep"></div></div>
+    </div>
+  </div>
+
+  <div id="hud-bottom-right">
+    <div id="hud-speed"></div>
+    <div class="weapon-row">
+      <canvas id="weapon-icon" width="96" height="48"></canvas>
+      <div id="hud-ammo"></div>
+    </div>
+  </div>
+
+  <div id="hud-objective" class="transient"></div>
+  <div id="hud-help" class="transient"></div>
+  <div id="hud-subtitle" class="transient"></div>
+  <div id="hud-namecard" class="transient"></div>
+  <div id="hud-radio" class="transient"></div>
+  <div id="hud-popup" class="transient"></div>
+  <div id="hud-repfloat" class="transient"></div>
+  <div id="hud-missioncard" class="transient"></div>
+  <div id="hud-bigcard" class="transient"></div>
+  <div id="crosshair" style="visibility:hidden"><span class="ch-h"></span><span class="ch-v"></span><span class="ch-dot"></span></div>
+</div>
+
+<div id="boot-error" style="display:none"></div>
+
+<!-- TITLE -->
+<div id="screen-title" class="screen">
+  <div class="title-shade"></div>
+  <div class="title-left">
+    <div class="logo-sun"></div>
+    <div class="logo-kicker">MAKE GTA 6 · AN OPEN-WORLD CRIME GAME</div>
+    <h1 class="logo">PUERTO<br>DEL SOL</h1>
+    <div class="tagline">Eight jobs. One garage. Your brother's name on the line.</div>
+    <div class="menu">
+      <button id="btn-new" class="menu-btn primary">NEW GAME</button>
+      <button id="btn-continue" class="menu-btn">CONTINUE</button>
+      <button id="btn-controls" class="menu-btn">HOW TO PLAY</button>
+      <div id="continue-info"></div>
+    </div>
+  </div>
+  <div class="title-right">
+    <div class="cast-label">THE CREW</div>
+    <div id="title-cast"></div>
+  </div>
+</div>
+
+<!-- CITY MAP -->
+<div id="screen-map" class="screen">
+  <div class="map-wrap">
+    <div class="map-left">
+      <div class="map-title">PUERTO DEL SOL <span>· CITY MAP</span></div>
+      <canvas id="map-canvas" width="640" height="560"></canvas>
+      <div class="map-buttons">
+        <button id="btn-map-resume" class="menu-btn primary">RESUME</button>
+        <button id="btn-map-save" class="menu-btn">SAVE</button>
+        <button id="btn-map-close" class="menu-btn">CLOSE</button>
+      </div>
+    </div>
+    <div class="map-right">
+      <div id="map-current" class="map-card"></div>
+      <div class="map-card">
+        <div class="map-card-title" id="map-story-count">STORY 0 / 8</div>
+        <div id="map-jobs"></div>
+      </div>
+      <div class="map-card">
+        <div class="map-card-title">STATS</div>
+        <div id="map-stats" class="stat-rows"></div>
+      </div>
+      <div class="map-card" id="map-save"></div>
+      <div class="map-card">
+        <div class="map-card-title">SKILLS</div>
+        <div id="map-skills"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAUSE -->
+<div id="screen-pause" class="screen">
+  <div class="pause-box">
+    <h2 class="pause-title">PAUSED</h2>
+    <button id="btn-resume" class="menu-btn primary">RESUME</button>
+    <button id="btn-pause-map" class="menu-btn">CITY MAP</button>
+    <button id="btn-pause-save" class="menu-btn">SAVE GAME</button>
+    <button id="btn-pause-quit" class="menu-btn">QUIT TO TITLE</button>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<div id="screen-controls" class="screen">
+  <div class="controls-box">
+    <h2 class="pause-title">HOW TO PLAY</h2>
+    <div class="controls-grid">
+      <div><b>W A S D</b><span>Move / drive</span></div>
+      <div><b>Mouse</b><span>Look around</span></div>
+      <div><b>Right click</b><span>Aim (hold)</span></div>
+      <div><b>Left click</b><span>Fire / punch</span></div>
+      <div><b>F</b><span>Enter / exit car</span></div>
+      <div><b>Space</b><span>Handbrake / drift</span></div>
+      <div><b>Shift</b><span>Sprint</span></div>
+      <div><b>R</b><span>Reload</span></div>
+      <div><b>1 – 4</b><span>Switch weapon</span></div>
+      <div><b>N</b><span>Radio station</span></div>
+      <div><b>M</b><span>City map</span></div>
+      <div><b>Esc</b><span>Pause</span></div>
+    </div>
+    <p class="controls-note">Follow the gold beacon. Finish 8 jobs to buy back your brother's garage. Stars mean the PSPD is coming — break contact to lose them.</p>
+    <button id="btn-controls-close" class="menu-btn primary">GOT IT</button>
+  </div>
+</div>
+
+<script type="module" src="src/boot.js"></script>
+</body>
+</html>
