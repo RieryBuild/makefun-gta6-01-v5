@@ -305,14 +305,15 @@
 
 ## Remote HEAD
 
-- Content HEAD (all entry files, gate record included): recorded
-  after the push (see below).
-- This record is updated after the push to note the SHA, so the
-  branch HEAD moves past the content HEAD by the record's own update
-  commit(s). The coordinator reads the branch HEAD at submit time
-  and submits that SHA — the tree is identical in content either way.
-- Pushed tree verified to match local at content HEAD (file counts
-  + blob shas compared; see the push log in the build dir).
+- Content HEAD (all 53 entry files, gate record included):
+  e9880434a9aa90a3205f05aede848c1a0908aefe
+  (tree 8fcca1b371a73aa60efb96c85d642a5310a42319)
+- This record was updated after the push to note the SHA, so the branch
+  HEAD moved past the content HEAD by the record's own update commit(s).
+  The coordinator reads the branch HEAD at submit time and submits that
+  SHA — the tree is identical in content either way.
+- Pushed tree verified to match local at content HEAD: 53 local files =
+  53 remote blobs, zero mismatches, zero remote-only files.
 
 ## Decision
 
