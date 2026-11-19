@@ -321,3 +321,301 @@
 The build is done, tested, reviewed, gated and pushed. The SUBMIT
 decision belongs to the coordinator after Reza's audit — no seal, no
 submit from this session.
+
+## Gate 3 — Reza visual audit: PASSED 2026-11-19 06:50 WITA
+
+Reza tapped "Gas, submit v5" on the audit widget (widget-f6e5284a) after viewing all 4 screenshots. Approved as-is (cover medium noted, no revision requested). Seal+submit coordinator spawned by the parent the same minute.
+
+---
+
+# Round-6 fix — run_completes rejection repair (re-gate from MQ1)
+
+- Fix session: ac252672-8e68-46ea-9339-b4885c591422 (this session,
+  spawned by the parent under the live fifth recording).
+- Recording: 01a1f136-4484-77d0-87c7-53b304ce15ba, started
+  2026-11-19T00:30:27Z (node PID 5901, alive through the whole fix —
+  checked before every entry-dir write). This session began AFTER
+  the recording started, so every fix write is witnessed.
+- Round 5: submission 01a1f11d-41f2-73a2-8c6a-8a7963b911f3, repo
+  RieryBuild/makefun-gta6-01-v5 @ 5448b875, submitted 08:03 WITA
+  19 Nov. All validity checks PASSED (transcripts_run_record,
+  98.0% authored, 17 usage records, signature 6do8). REJECTED on
+  ONE check: run_completes ("The latest grade run on the dev phase
+  ended failed", HTTP 422 "Run did not complete").
+- Scope (hard constraint, kept): main.ts ONLY + this gate record.
+  game/ and screenshots/ NOT touched — no visual or gameplay change.
+  Verified by full tree diff vs a fresh clone @ 5448b875 (below).
+- Re-gate run: 19 Nov 2026 ~08:31–08:40 WITA (00:31–00:40Z).
+- Verdict: **MQ1–MQ8 PASS. Gates 0–2 PASS. Gate 3: no fresh Reza
+  audit needed — NO visual change was made (the parent decides
+  whether the 06:50 WITA Gas covers round 6).**
+
+## Root cause (proven by faithful reproduction, re-verified this session)
+
+v5's new `rmSync(out, { recursive: true, force: true })` (main.ts
+line 33, the "wipe first" determinism step — v2 did not have it)
+tries to delete the /output directory ITSELF. In the grader /output
+is a bind-mounted volume and the process runs as user 65534 on a
+read-only filesystem, so rmdir fails (EACCES; `force: true` ignores
+only ENOENT) → uncaught exception → exit 1. Local playtest passed
+because MAKEFUN_OUTPUT_DIR=out is a plain owned dir, not a mount
+point.
+
+## Repro evidence — before (unfixed code, this session)
+
+- Harness: /tmp/repro-run.sh (also in the build dir) — node22.21.0,
+  repo bind-mounted read-only, empty /output bind-mounted chmod 777,
+  run as 65534:65534, 1 CPU, timeout 10s, grader env vars.
+- Pre-fix run (label v5prefixed): **EXIT=1, 366 ms**,
+  `Error: EACCES: permission denied, rmdir
+  '/tmp/repro-v5prefixed/mnt/output'` at main.ts:33 — matches the
+  parent's repro (367 ms) exactly. Diagnosis confirmed, not re-made.
+
+## The fix (main.ts ONLY — full diff)
+
+```diff
+-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
++import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+@@ function main() {
+   // Wipe first: the dossier must describe exactly this tree, nothing
+-  // left over from a previous run.
+-  rmSync(out, { recursive: true, force: true });
++  // left over from a previous run. Wipe the CONTENTS, not the
++  // directory: in the grader /output is a mounted volume the process
++  // cannot rmdir (EACCES) — deleting the directory itself fails the run.
+   mkdirSync(out, { recursive: true });
++  for (const entry of readdirSync(out)) rmSync(join(out, entry), { recursive: true, force: true });
+   copyTree(join(here, 'game'), join(out, 'game'));
+```
+
+Wipe the CONTENTS, not the directory: mkdir first (creates it if
+missing, no-op if present), then rmSync each entry inside it. The
+determinism intent is unchanged — stale files from a previous run
+still cannot leak into the dossier.
+
+## Repro evidence — after (fixed code, this session)
+
+- Empty output (label v5fixed): **EXIT=0, 810 ms**, dossier.json
+  727,978 B written; stderr only the Node UNDICI-EHPA proxy warning.
+- Pre-populated output (label v5stale3, stale variant
+  /tmp/repro-run-stale.sh): stale file + nested stale dirs +
+  stale dossier.json, all created AS user 65534 (faithful: a
+  previous grader run's leftovers are nobody-owned) — **EXIT=0,
+  766 ms, every stale entry removed**, fresh dossier.json written.
+  The contents-wipe preserves the determinism intent.
+- First stale attempt (v5stale2) FAILED on root-owned 770 stale
+  dirs (EACCES scandir) — a TEST-SETUP artifact, not a fix failure:
+  root-owned non-world-readable dirs are not something a grader run
+  can produce (its own leftovers are nobody-owned). Recorded so the
+  failed run is not misread later.
+
+## Pushed code is what failed (fresh clone @ 5448b875)
+
+- Fresh clone of RieryBuild/makefun-gta6-01-v5 @ 5448b875:
+  its main.ts differs from the FIXED main.ts ONLY by the fix diff
+  above — the pushed code is exactly the pre-fix code.
+- Full tree diff (clone vs entry dir, excluding main.ts, this gate
+  record, and entry-local .makefun/): CLEAN — game/, screenshots/,
+  vendor/, serve.ts, README.md, scorecard.md, shots.json, LICENSE
+  are byte-identical to the pushed tree. No visual/gameplay change.
+
+## Play-test (fixed code, full run)
+
+- `node playtest.cjs --play` (build dir, serves the entry dir):
+  **30/30 PASS, 0 errors** (log: build/playtest-round6-fix-run.log;
+  the 18 Nov final log is preserved as
+  build/playtest-log-2026-11-18-final-pre-fix.md). Same cash/REP/
+  fine/bill figures as the 18 Nov final run. NO screenshots re-shot
+  (none needed — game/ untouched).
+
+## Determinism + dossier bytes
+
+- main.ts (node22) twice into two fresh output dirs: **byte-identical**
+  (diff -r clean over dossier.json + game/ + screenshots/).
+- Pre-fix main.ts (from the clone @ 5448b875) vs FIXED main.ts on
+  the SAME tree: **dossier byte-identical** (diff -r clean). The fix
+  cannot and does not change the dossier — main.ts is not in the
+  dossier text (buildDossier's text comes only from game/ sources).
+- Dossier now: text **163,824 B** (cap 163,840 — 16 B headroom),
+  dossier.json 727,978 B (cap 1.5 MiB). Both under cap.
+- Note on the gate-time figures (163,829 B text / 728,032 B total):
+  they were measured on a pre-final tree state — game/ was 946,939 B
+  at MQ1 measurement time vs 947,613 B in the pushed tree (game/
+  has been 947,613 B since commit 3a68dda, 02:40:33 WITA; the pushed
+  HEAD 5448b875 is the same). The decisive comparison is pre-fix vs
+  fixed on the SAME tree, which is byte-identical.
+
+## MQ1: Can this entry be submitted RIGHT NOW, end to end? — PASS
+
+1. Competition: gta6-01 — entries close 2026-11-24T15:00:00Z
+   (unchanged; ~5 days ahead).
+2. Deliverables: unchanged from the gate run except main.ts (the
+   fix) + this gate record. game/ 44 files/dirs, 947,613 B;
+   index.html 5,185 B; screenshots 4 × ≤256 KiB (104,693 / 118,090 /
+   92,062 / 104,438 B — unchanged); LICENSE, .makefun/owner.json
+   (6do8), shots.json, serve.ts, README.md, scorecard.md all present.
+   The round-6 commit is a NEW commit (fix + this record) — the
+   coordinator pushes it via the PAT route and records the remote
+   SHA before submit; this session commits LOCALLY only, does NOT push.
+3. Checks: every applying check met — same numbers as the gate run,
+   plus the failing one now proven: run_completes passes in the
+   grader-faithful harness (EXIT=0, 810 ms, under the 10 s limit).
+   Dossier text 163,824 B ≤ 163,840; dossier.json 727,978 B ≤ 1.5 MiB.
+   No "probably".
+4. Submit path: coordinator submits via the level-20 CLI with the
+   new commit SHA + all FIVE recordings (the four sealed ones + the
+   live 01a1f136, sealed by the coordinator after this session).
+   Builder does not submit (audit stop stands for the parent's call).
+5. Cost: time ~10 min to submit; capital $0.
+
+## MQ2: Does this entry clear the competition's bar? — PASS (unchanged)
+
+- Same game, same judged set, same scorecard (2.30, zero automatic
+  failures) as the gate run — the fix changes no scoring input
+  (dossier byte-identical). The bar analysis from the gate run
+  stands: v5 is demonstrably stronger than the v2 it supersedes
+  (8 missions vs 3, designed humanoid, full streets, title + map
+  screens). No grade is quoted as a promised outcome.
+
+## MQ3: Is the submission window actually open for this account? — PASS
+
+- Quota via the level-20 kit CLI (`status --competition gta6-01
+  --json`, bring-the-humans-02 kit copy, ~00:37Z): **can_submit
+  true**; day cap 3, taken 1 (round 5), left 2 (resets
+  2026-11-20T00:00:00Z); hard limit max 20, left 15; entries_made 5,
+  entries_kept 2; total count withheld by the site (reputation note
+  says entries remain). Deadline 2026-11-24T15:00:00Z is ~5 days ahead.
+- Read-only check only — NO submit was attempted by this session.
+
+## MQ4: Is the entry signed by the right identity, through the right route? — PASS (unchanged)
+
+- Wallet 6do8 ONLY (.makefun/owner.json, untouched). The fix commit
+  is pushed via the GitHub PAT route by the coordinator (this session
+  does not push). No other wallet, no other route.
+
+## MQ5: Is this entry a deliberate new submission, not a duplicate? — PASS
+
+- Not a duplicate: main.ts changed — the artifact that failed.
+  Round 6 supersedes the REJECTED round-5 submission under
+  Force_Last; the supersede is intended (round 5 has no live grade:
+  it was rejected on run_completes). This is a rejection re-entry,
+  not a second rebuild trigger for a standing entry.
+
+## MQ6: Can you prove the entry works — beyond "it should work"? — PASS
+
+- Play-test re-run on the FIXED code: 30/30, 0 errors (above).
+- The actual failing check is now proven in the grader-faithful
+  harness: run_completes EXIT=0 in 810 ms (was EXIT=1 in 366 ms),
+  plus the stale-output variant EXIT=0 in 766 ms.
+- Determinism byte-identical; dossier byte-identical pre-fix vs
+  fixed; screenshots unchanged and already viewed full-size +
+  audited by Reza (Gate 3, 06:50 WITA). Scorecard unchanged (2.30,
+  zero automatic failures).
+
+## MQ7: Is this entry on the never-submit list? — PASS (no match)
+
+- No code-drawn images (screenshots untouched, real renders).
+- main.ts stays stdlib-only (readdirSync is node:fs).
+- Recording 01a1f136 started BEFORE this session's first write
+  (00:30:27Z vs first fix write ~00:31:33Z); in-session revision
+  present (the fix itself revises main.ts in-session).
+- Wallet 6do8 only; repo via the PAT route (coordinator pushes).
+- No claim codes anywhere (none issued for round 6; none in the
+  repo/chat/transcript). No secrets in the repo (grep clean at
+  re-gate time: no API keys, no private keys, no tokens; the only
+  wallet address in the tree is owner.json's 6do8).
+- can_submit true, 2 left today (MQ3). Entry needs no capital ($0).
+- No grade quoted as a promised outcome (MQ2).
+- Not a duplicate (MQ5). No visual change — no fresh audit needed
+  (Gate 3, parent decides).
+
+## MQ8: Session check — PASS (fifth session, covered)
+
+1. Fix session ac252672-8e68-46ea-9339-b4885c591422 /
+   recording 01a1f136-4484-77d0-87c7-53b304ce15ba — main.ts fix +
+   this gate record. The four earlier recordings (01a1eeef,
+   01a1ef13, 01a1efa5, 01a1efdb) remain sealed and listed; round 6
+   lists all FIVE (coverage is the union).
+2. Recording start 2026-11-19T00:30:27Z — BEFORE this session's
+   first build action (first main.ts write ~00:31:33Z).
+3. First action: the main.ts import edit (readdirSync).
+4. Coverage: recording LIVE through the whole fix (PID 5901,
+   checked alive before every entry-dir write). Seal is the
+   coordinator's job after this session completes cleanly.
+5. In-session revision: main.ts revised in-session (the fix);
+   this gate record written in-session. thinking_revised is met.
+
+## Gate 0: Reality — PASS
+
+- [x] Entry passes its play-test (30/30, 0 errors) AND the
+  grader-faithful repro (EXIT=0) on the fixed code (MQ6).
+- [x] Every deliverable from /requirements is in the tree (MQ1).
+- [x] Evidence captured: repro before/after (exit codes + wall
+  times + stderr), play-test log, determinism diff, dossier
+  byte-identity proof, fresh-clone tree diff, quota response,
+  Gate 1 raw exchange (build/gate1-review-round6-fix-raw.json).
+- [ ] Repo commit: LOCAL ONLY this session (hash in the fix
+  builder's report to the parent). The coordinator pushes via the
+  PAT route and records the remote SHA before submit — the remote
+  HEAD check is the coordinator's, not this session's.
+
+## Gate 1: Quality — PASS
+
+- [x] Multi-model review done — LIGHT review of ONLY the main.ts
+  diff (the only code that changed):
+  code/reasoning reviewed by nvidia/nemotron-3-ultra-550b-a55b:free
+  via OpenRouter (custom.openrouter helper; GET /models re-checked
+  first — 445 models, 14 :free, nemotron still listed), cost $0,
+  1,326 tokens (raw in build/gate1-review-round6-fix-raw.json).
+  Verdict PASS, no findings: the fix never calls rmSync on `out`
+  itself; the contents-wipe removes stale files/dirs recursively;
+  empty dir / missing dir / symlink / undeletable entry all handled
+  (fails loudly on undeletable entries — no silent staleness).
+  - Gemini text/copy review SKIPPED — still 503ing (probed
+    19 Nov ~00:37Z: gemini-3.8-flash generateContent → HTTP 503
+    Service Unavailable). Gap recorded here; per the house rule
+    that is NOT a Gate 1 FAIL. Substantively moot: the dossier
+    text is byte-identical to round 5's, so there is no new
+    text/copy to review.
+- [x] The review exchange is recorded (model, verdict, findings)
+  here and as raw JSON in the build dir.
+- [x] Practice grade N/A (judged/visual competition) — the evidence
+  is the top-5 study + review + scorecard, stated as evidence, never
+  a promised outcome (MQ2).
+- [x] Feed-first study done for the rebuild (MQ5 of the gate run):
+  v5 is demonstrably stronger than the standing v2 it supersedes.
+
+## Gate 2: Dedup — PASS
+
+- [x] Not a duplicate of the standing entry (MQ5) — Force_Last
+  supersede of the rejected round-5 submission is intended.
+- [x] Rebuild-once rule respected: this is a rejection re-entry
+  (round 5 was rejected, not standing), not a second rebuild
+  trigger for a standing entry.
+- [x] Quota re-checked at re-gate time via the competition's own
+  endpoint (MQ3: can_submit true, 2 left today, 15 under hard limit).
+
+## Gate 3: Submission quality — NO FRESH AUDIT NEEDED (no visual change; the parent decides)
+
+- [x] README matches the requirements template (unchanged).
+- [x] Entry message + signature use wallet 6do8 only; repo via PAT route (MQ4).
+- [x] Claim-code handling confirmed: no claim codes issued for
+  round 6; none in the repo, chat, or transcripts.
+- [x] No secrets in the repo (grep clean at re-gate time).
+- [x] Deadline still ahead at submit time (~5 days, MQ1/MQ3).
+- [x] Reza visual audit — NO FRESH ROUND NEEDED: game/ and
+  screenshots/ are byte-identical to the pushed tree Reza audited
+  at 06:50 WITA (full tree diff clean, see above). The fix touches
+  only main.ts (grader plumbing) + this gate record — nothing Reza
+  sees has changed. The parent decides whether the existing Gas
+  covers round 6; this session does NOT submit either way.
+
+## Decision (Round-6 fix)
+
+**MQ1–MQ8 pass. Gates 0–2 pass. Gate 3: no fresh audit needed
+(no visual change) — parent decides on the existing Gas.**
+The run_completes failure is fixed and proven fixed in the
+grader-faithful harness; the game, the screenshots, and the dossier
+are unchanged. The SUBMIT decision belongs to the parent/coordinator
+(push via PAT, seal 01a1f136, submit round 6) — no seal, no submit
+from this session.
