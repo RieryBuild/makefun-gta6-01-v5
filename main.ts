@@ -13,7 +13,7 @@
 // over the same tree produces byte-identical output — no stale file
 // from an earlier run can leak into the dossier.
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -29,9 +29,11 @@ function copyTree(from, to) {
 
 function main() {
   // Wipe first: the dossier must describe exactly this tree, nothing
-  // left over from a previous run.
-  rmSync(out, { recursive: true, force: true });
+  // left over from a previous run. Wipe the CONTENTS, not the
+  // directory: in the grader /output is a mounted volume the process
+  // cannot rmdir (EACCES) — deleting the directory itself fails the run.
   mkdirSync(out, { recursive: true });
+  for (const entry of readdirSync(out)) rmSync(join(out, entry), { recursive: true, force: true });
   copyTree(join(here, 'game'), join(out, 'game'));
   copyTree(join(here, 'screenshots'), join(out, 'screenshots'));
 
