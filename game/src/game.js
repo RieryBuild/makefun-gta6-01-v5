@@ -248,8 +248,10 @@ export class Game {
     // Reset staging knobs to play defaults: staging sets them AFTER
     // calling newGame(), so a fresh game never inherits a staged value.
     this.cam.distScale = 1;
+    this.cam.drivePitch = 0.22;
     this.player.ramKeepsSpeed = false;
     this.world.police.roadblockDist = 60;
+    if (this.world.police.heli) this.world.police.heli.hold = false;
     this.heroCarAt(-56, 150, Math.PI / 2);
     this.state = 'playing';
     this.menus.hideAll();
@@ -274,8 +276,10 @@ export class Game {
     // inherit a staged value either (e.g. Continue pressed after a
     // ?shot= staging URL set them).
     this.cam.distScale = 1;
+    this.cam.drivePitch = 0.22;
     this.player.ramKeepsSpeed = false;
     this.world.police.roadblockDist = 60;
+    if (this.world.police.heli) this.world.police.heli.hold = false;
     this.state = 'playing';
     this.menus.hideAll();
     this.cam.mode = 'foot';
@@ -474,6 +478,9 @@ export class Game {
       mag: this.player.ammo[this.player.weapon].mag,
       reserve: this.player.ammo[this.player.weapon].reserve,
       speedKmh: this.player.speedKmh, driving: !!this.player.driving,
+      carName: this.player.driving?.spec.name,
+      carCond: this.player.driving ? this.player.driving.condition / 100 : 0,
+      rank: this.growth.rank.name,
       missionTarget: this.story.stageTarget(),
       policeBlips: this.world.police.blips(),
       enemyBlips: this.enemies.blips(),
