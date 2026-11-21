@@ -22,13 +22,14 @@ export function stageShot(game, name, seed = 1) {
   // the subtitle. mc = corner mission card, radio = station pill,
   // big = MISSION PASSED card — all optional per shot.
   let shotHud = null;
-  const stageHud = (obj, sub, mc, radio, big) => {
-    shotHud = { obj, sub, mc, radio, big };
+  const stageHud = (obj, sub, mc, radio, big, pop) => {
+    shotHud = { obj, sub, mc, radio, big, pop };
     if (obj) hud.showObjective(obj.text, obj.color);
     if (sub) hud.showSubtitle(sub.speaker, sub.text);
     if (mc) hud.showMissionCard(mc.title, mc.sub, 120000, 'corner');
     if (radio) hud.showRadio(radio.station, radio.track, 120000);
     if (big) hud.showBigCard(big, 120000);
+    if (pop) hud.showPopup(pop.text, pop.color, 120000);
   };
   const ready = () => {
     setTimeout(() => {
@@ -37,6 +38,7 @@ export function stageShot(game, name, seed = 1) {
       if (shotHud?.mc) hud.showMissionCard(shotHud.mc.title, shotHud.mc.sub, 120000, 'corner');
       if (shotHud?.radio) hud.showRadio(shotHud.radio.station, shotHud.radio.track, 120000);
       if (shotHud?.big) hud.showBigCard(shotHud.big, 120000);
+      if (shotHud?.pop) hud.showPopup(shotHud.pop.text, shotHud.pop.color, 120000);
       window.__shotReady = true;
     }, 1400);
   };
@@ -85,6 +87,7 @@ export function stageShot(game, name, seed = 1) {
     // traffic (distant car, one half-hidden cruiser, no heli, no
     // peds), so every element here is placed to be SEEN.
     game.growth.addRep(500);
+    game.growth.cash = 12450; // staged mid-game cash, as the map shot stages it.
     player.health = 100;
     player.armor = 60;
     // Avenue x=-40 (avenues run at x = -160,-120,-80,-40,0,...): the
@@ -108,33 +111,18 @@ export function stageShot(game, name, seed = 1) {
     world.police.setWanted(3); // spawns 4 cruisers + heli + roadblock
     // Cruisers AROUND the hero car, not all ahead of it: the v5 frame
     // read as speeding toward traffic because every cruiser sat in
-    // front. Two now flank the hero's quarters and two hold the road
-    // ahead. The first rear-quarter attempt (staged 1 m BEHIND the
-    // hero) failed in the diag: a cruiser behind the hero shows the
-    // camera its 4.4 m FLANK, which reads far bigger than the hero's
-    // 2 m rear — the two flanks filled the bottom corners and buried
-    // the hero. Cruisers staged AHEAD show the camera their rears,
-    // the same profile as the hero, so the hero stays the biggest car
-    // in the frame. The second attempt (4 m ahead) failed the other
-    // way: the pursuit caps cruisers at 19.8 m/s, the hero (26 m/s^2)
-    // caught them by t=0.47, and carVsTraffic's 0.75x-per-frame
-    // overlap penalty collapsed the speedo to 80. At 8 m the same
-    // thing happened by t=0.72 (86 km/h, nose-to-tail). So the flank
-    // pair gets a top-speed override (c.top = 34, police.js): they
-    // hold ~31 m/s, the hero closes only ~4 m by t=1.0, and the pair
-    // stays ~4–9 m ahead, flanking the hero's front quarters — a
-    // mid-ram at the quarter panel, always past the 3.2 m collision
-    // radius, so the car is never actually touched and the speedo
-    // stays high. The capture window itself is load-dependent
-    // (t=0.4–1.0), which is why the margin is sized for t=1.0.
-    // The pair also stages WIDE (±5 m) with OPPOSITE wobble phases:
-    // the intercept steering pulls both toward the hero's line, and
-    // with the same phase they stacked into a single dark mass dead
-    // ahead (diag v4). Opposite phases keep them staggered — one
-    // left-forward, one right-back — so two cruisers read, not one.
+    // front. The r7 flank pair (top-speed override, ±5 m, opposite
+    // wobble) still failed the judged frame: the intercept steering
+    // pulled both onto the hero's line by t=0.62 (diag v5: x -39.6 /
+    // -39.4, NDC x 0.02 / 0.04) — dead behind the hero car from the
+    // chase camera, invisible. So the flank pair now holds ESCORT
+    // formation (police.js): fixed slots ±5 m lateral, 8 m ahead, speed
+    // matched to the player — they stay visibly adjacent at the frame
+    // edges for the whole capture window, outside the 3.2 m collision
+    // radius, never touching the car. Two hold the road ahead.
     const slots = [
-      { x: cx - 5, z: cz - 8, speed: 26, top: 34, wobble: 0 },
-      { x: cx + 5, z: cz - 8, speed: 26, top: 34, wobble: Math.PI },
+      { x: cx - 5, z: cz - 8, speed: 26, escort: { lat: 5, ahead: 8 } },
+      { x: cx + 5, z: cz - 8, speed: 26, escort: { lat: -5, ahead: 8 } },
       { x: cx - 3, z: cz - 24, speed: 22 },
       { x: cx + 3.5, z: cz - 30, speed: 22 },
     ];
@@ -144,8 +132,7 @@ export function stageShot(game, name, seed = 1) {
       c.mesh.rotation.y = Math.PI;
       c.heading = Math.PI;
       c.speed = s.speed;
-      if (s.top) c.top = s.top; // staging-only pursuit override
-      if (s.wobble !== undefined) c.wobble = s.wobble; // stagger the pair
+      if (s.escort) c.escort = s.escort; // staging-only formation hold
     });
     // Heli ahead-left of the player and LOW (13 m, not 24): at 24 m
     // the heli sat ~39° above the chase camera's horizon while the
@@ -153,14 +140,15 @@ export function stageShot(game, name, seed = 1) {
     // flatter drive pitch below it sits ~21° up — inside the frame —
     // and the beam slants diagonally onto the road ahead. The orbit is
     // HELD at the staged angle (hold: true) so the heli cannot drift
-    // out of frame before the capture. The beam aims 15 m AHEAD of
+    // out of frame before the capture. The beam aims 8 m AHEAD of
     // the car, not at it — a beam aimed at the player points straight
     // down the chase camera's lens and floods the frame as a white
-    // wedge.
+    // wedge — and 8 m (not 15) puts the ground pool on open asphalt
+    // just ahead of the hero car instead of under the traffic cluster.
     if (world.police.heli) {
       world.police.heli.angle = -Math.PI / 2 - 0.45;
       world.police.heli.height = 13;
-      world.police.heli.aimAhead = 15;
+      world.police.heli.aimAhead = 8;
       world.police.heli.hold = true;
     }
     // Roadblock close enough to read: 18 m ahead, just in front of the
@@ -191,6 +179,18 @@ export function stageShot(game, name, seed = 1) {
         world.traffic.placeOnRoute(car);
       }
     });
+    // Parked cars don't move, so the traffic re-route above misses
+    // them — in diag v1 a parked sedan sat exactly on each escort slot
+    // (pink at -44/-54, white at -36/-47), burying both cruisers
+    // behind foreground traffic. Slide any parked car in the avenue
+    // corridor near the chase onto a far avenue for the shot.
+    world.traffic.parked.forEach((p, i) => {
+      const m = p.mesh.position;
+      if (Math.abs(m.x - cx) < 10 && Math.abs(m.z - cz) < 50) {
+        m.set(120, 0, cz - 80 - i * 6);
+        p.x = 120; p.z = cz - 80 - i * 6;
+      }
+    });
     // Street life: peds on both sidewalks, fleeing the chase. spawn()
     // scatters across random walk lines, so pin the fresh peds onto
     // the avenue's sidewalks by hand, then raise the alarm — in range
@@ -214,11 +214,15 @@ export function stageShot(game, name, seed = 1) {
     game.cam.yaw = 0; // == heading + PI: converged from frame one
     // No separate objective line in this frame — the corner mission
     // card carries the brief, so the top-left stays a single element.
+    // The popup is the game's real NEAR MISS string (player.js), shown
+    // at capture by the same re-show pattern as the card + subtitle.
     stageHud(
       null,
       { speaker: 'teo', text: CAST.teo.lines.chase },
       { title: 'JOB 1/8 · FIRST LIGHT', sub: 'STAGE 1/2 · Get to the garage — lose the heat' },
       { station: game.sound.station, track: game.sound.station.show },
+      null,
+      { text: 'NEAR MISS  +$250', color: '#2ecc71' },
     );
     ready();
     return;
