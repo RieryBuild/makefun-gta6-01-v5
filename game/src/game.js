@@ -48,6 +48,7 @@ export class Game {
     });
     this.state = 'title';
     this.t = 0;
+    this.dayMin = 18 * 60 + 24; // in-game clock: DAY 1, 18:24 at sunset; +1 min per 10 game-s.
     this.autosaveT = 0;
     this.nextMissionT = 0;
     this.district = null;
@@ -120,10 +121,9 @@ export class Game {
       this.growth.addRep(m.rep);
       this.growth.stats.missionsDone++;
       // Mission rewards name their unlock in display case ('Pistol',
-      // 'SMG', 'Rifle', 'Armour'); the unlocked set only ever holds
-      // lowercase weapon keys. Fold the case at this boundary, so a
-      // future mission written as 'RIFLE' or 'ARMOUR' still pays its
-      // reward instead of silently skipping it.
+      // 'SMG', 'Rifle', 'Armour'); the unlocked set holds lowercase
+      // weapon keys only. Fold the case here so a future mission
+      // written as 'RIFLE' still pays its reward.
       const rewardKey = String(m.unlock || '').toLowerCase();
       if (rewardKey === 'armour') this.player.armor = 100;
       else if (rewardKey !== 'fists' && Object.hasOwn(WEAPONS, rewardKey)) this.growth.unlocked.add(rewardKey);
@@ -383,10 +383,9 @@ export class Game {
     this.t += dt;
     if (this.state === 'playing') this.updatePlaying(dt);
     else if (this.state === 'title') this.updateTitle(dt);
-    // Debug hook for the logic play-test: SwiftShader renders this scene
-    // at ~0.3 fps, so the harness sets noRender to run game time at full
-    // speed while it drives the systems. Default off; the shipped game
-    // always renders.
+    // Debug hook for the logic play-test: SwiftShader renders this
+    // scene at ~0.3 fps, so the harness sets noRender to run game time
+    // at full speed while it drives the systems. Default off.
     if (!this.noRender) this.world.render();
     this.controls.endFrame();
   }
@@ -475,19 +474,25 @@ export class Game {
       cash: this.growth.cash, wanted: this.world.police.wanted,
       health: this.player.health, armor: this.player.armor, repFrac,
       weapon: this.player.weapon,
+      unlocked: this.growth.unlocked,
       mag: this.player.ammo[this.player.weapon].mag,
       reserve: this.player.ammo[this.player.weapon].reserve,
       speedKmh: this.player.speedKmh, driving: !!this.player.driving,
       carName: this.player.driving?.spec.name,
       carCond: this.player.driving ? this.player.driving.condition / 100 : 0,
-      rank: this.growth.rank.name,
+      rank: this.growth.rank.name, rep: this.growth.rep,
+      district: this.district,
+      day: 1 + Math.floor(this.dayMin / 1440),
+      time: `${String(Math.floor((this.dayMin % 1440) / 60)).padStart(2, '0')}:${String(Math.floor(this.dayMin % 60)).padStart(2, '0')}`,
+      raceT: this.story.raceT,
       missionTarget: this.story.stageTarget(),
       policeBlips: this.world.police.blips(),
       enemyBlips: this.enemies.blips(),
       searchActive: this.world.police.searchActive,
     });
-    // Play time + autosave.
+    // Play time + clock + autosave.
     this.growth.stats.playTime += dt;
+    this.dayMin += dt * 0.1;
     this.autosaveT += dt;
     if (this.autosaveT > 30) {
       this.autosaveT = 0;
