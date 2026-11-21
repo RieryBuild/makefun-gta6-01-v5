@@ -121,9 +121,12 @@ function buildDeco(x, z, w, d, h, pal, rng, seed, brand) {
   });
   const body = box(w, h, d, std(tex), 0, h / 2, 0);
   g.add(body);
-  // Stepped parapet — the Art Deco crown.
+  // Stepped parapet — the Art Deco crown. Every second building gets
+  // a taller crown step, so the skyline varies instead of repeating
+  // the same two-step silhouette on every block.
   g.add(box(w * 0.7, 1.1, d * 0.7, std(pal.trim), 0, h + 0.55, 0));
-  g.add(box(w * 0.45, 1.0, d * 0.45, std(base), 0, h + 1.6, 0));
+  const crownH = seed % 2 ? 1.8 : 1.0;
+  g.add(box(w * 0.45, crownH, d * 0.45, std(base), 0, h + 1.1 + crownH / 2, 0));
   // Rounded corner: a half-cylinder column at the street corner.
   const corner = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, h, 12, 1, false, 0, Math.PI / 2), std(base));
   corner.position.set(w / 2, h / 2, d / 2);
@@ -190,7 +193,13 @@ function buildMarketRow(x, z, w, d, h, pal, rng, seed, brand) {
   });
   const body = box(w, h, d, std(tex), 0, h / 2, 0);
   g.add(body);
-  // Balconies on the upper floor: slab + railing, aligned with windows.
+  // Setback upper floor on every third row: a rooftop room + trim cap
+  // breaks the flat slab silhouette. It sits inside the base footprint,
+  // so the collider (base w/d) still covers it — no new collider.
+  if (seed % 3 === 0) {
+    g.add(box(w * 0.62, 2.5, d * 0.62, std(base), 0, h + 1.25, 0));
+    g.add(box(w * 0.62, 0.18, d * 0.62, std(pal.trim), 0, h + 2.6, 0));
+  }
   const floors = Math.max(1, Math.floor(h / 3.2) - 1);
   for (let f = 0; f < floors; f++) {
     const by = 4.2 + f * 3.2;
