@@ -12,6 +12,7 @@
 // There is NO text police table, ever.
 
 import { AVENUES, STREETS, WORLD, POIS } from './cityplan.js';
+import { DISTRICTS } from './palette.js';
 import { WEAPONS } from './shooting.js';
 import { makePortrait } from './facekit.js';
 import { CAST } from './cast.js';
@@ -44,6 +45,10 @@ export class Hud {
     this.repFloatEl = el('hud-repfloat');
     this.carNameEl = el('hud-carname');
     this.repLabelEl = el('hud-replabel');
+    this.slotsEl = el('weapon-slots');
+    this.slotsCtx = this.slotsEl?.getContext('2d') || null;
+    this.locationEl = el('hud-location');
+    this.timerEl = el('hud-timer');
     this.timers = {};
     this.flashDamageUntil = 0;
     this.portraits = {};
@@ -101,13 +106,15 @@ export class Hud {
       g.arc(RADAR_R, RADAR_R, 60 * (S / RADAR_RANGE), 0, Math.PI * 2);
       g.stroke();
     }
-    // Mission marker: gold diamond.
+    // Mission marker: gold diamond, big enough to read at a glance.
     if (state.missionTarget) {
       const mx = px(state.missionTarget.x), mz = pz(state.missionTarget.z);
       g.fillStyle = '#ffd700';
+      g.strokeStyle = '#ffffff';
+      g.lineWidth = 1.5;
       g.beginPath();
-      g.moveTo(mx, mz - 6); g.lineTo(mx + 5, mz); g.lineTo(mx, mz + 6); g.lineTo(mx - 5, mz);
-      g.closePath(); g.fill();
+      g.moveTo(mx, mz - 8); g.lineTo(mx + 7, mz); g.lineTo(mx, mz + 8); g.lineTo(mx - 7, mz);
+      g.closePath(); g.fill(); g.stroke();
     }
     // POI blips (small, only the nearest few matter at this zoom).
     for (const p of POIS) {
@@ -116,15 +123,23 @@ export class Hud {
       g.fillStyle = p.kind === 'safehouse' ? '#2ecc71' : p.kind === 'police' ? '#4a90d9' : '#c8c8c8';
       g.beginPath(); g.arc(x, z, 2.5, 0, Math.PI * 2); g.fill();
     }
-    // Police blips: flashing red/blue dots.
+    // Police blips: big flashing red/blue dots with a white ring, plus
+    // a short leader line toward the player arrow — the convergence
+    // reads at a glance instead of a scatter of specks.
     const flash = Math.floor(performance.now() / 250) % 2 === 0;
     for (const b of state.policeBlips || []) {
       const x = px(b.x), z = pz(b.z);
       if (x < 0 || x > S || z < 0 || z > S) continue;
+      g.strokeStyle = 'rgba(255,68,68,0.55)';
+      g.lineWidth = 1.5;
+      g.beginPath();
+      g.moveTo(x, z);
+      g.lineTo(RADAR_R + (x - RADAR_R) * 0.55, RADAR_R + (z - RADAR_R) * 0.55);
+      g.stroke();
       g.fillStyle = b.kind === 'heli' ? '#ff4444' : (flash ? '#ff4444' : '#4488ff');
-      g.beginPath(); g.arc(x, z, b.kind === 'heli' ? 5 : 4, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(x, z, b.kind === 'heli' ? 7 : 5.5, 0, Math.PI * 2); g.fill();
       g.strokeStyle = '#ffffff';
-      g.lineWidth = 1;
+      g.lineWidth = 1.5;
       g.stroke();
     }
     // Enemy blips: red dots.
@@ -184,6 +199,24 @@ export class Hud {
     this.repEl.style.width = Math.max(0, Math.min(100, repFrac * 100)) + '%';
   }
 
+  // Weapon silhouette shapes, drawn at offset (ox, oy) and scale s —
+  // shared by the big weapon icon and the slots strip below.
+  drawWeaponShape(g, kind, ox, oy, s) {
+    const r = (x, y, w, h) => g.fillRect(ox + x * s, oy + y * s, w * s, h * s);
+    if (kind === 'rifle') {
+      r(8, 20, 62, 8); r(70, 22, 20, 4); r(18, 28, 7, 12);
+      r(42, 28, 6, 14); r(2, 16, 10, 10); r(34, 14, 12, 5);
+    } else if (kind === 'smg') {
+      r(14, 20, 48, 9); r(62, 22, 14, 4); r(22, 29, 7, 12);
+      r(44, 29, 6, 16); r(6, 16, 10, 9);
+    } else if (kind === 'pistol') {
+      r(24, 18, 44, 8); r(30, 26, 9, 16); r(60, 14, 6, 4);
+    } else { // fists
+      g.beginPath(); g.arc(ox + 34 * s, oy + 24 * s, 13 * s, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(ox + 62 * s, oy + 24 * s, 13 * s, 0, Math.PI * 2); g.fill();
+    }
+  }
+
   // Weapon silhouette: a small canvas drawing per weapon, white on
   // transparent — an icon, never a text label.
   drawWeaponIcon(kind) {
@@ -191,30 +224,45 @@ export class Hud {
     const g = c.getContext('2d');
     g.clearRect(0, 0, 96, 48);
     g.fillStyle = '#ffffff';
-    g.strokeStyle = '#ffffff';
-    if (kind === 'rifle') {
-      g.fillRect(8, 20, 62, 8);            // receiver
-      g.fillRect(70, 22, 20, 4);           // barrel
-      g.fillRect(18, 28, 7, 12);           // grip
-      g.fillRect(42, 28, 6, 14);           // magazine
-      g.fillRect(2, 16, 10, 10);           // stock
-      g.fillRect(34, 14, 12, 5);           // sight
-    } else if (kind === 'smg') {
-      g.fillRect(14, 20, 48, 9);
-      g.fillRect(62, 22, 14, 4);
-      g.fillRect(22, 29, 7, 12);
-      g.fillRect(44, 29, 6, 16);
-      g.fillRect(6, 16, 10, 9);
-    } else if (kind === 'pistol') {
-      g.fillRect(24, 18, 44, 8);
-      g.fillRect(30, 26, 9, 16);
-      g.fillRect(60, 14, 6, 4);
-    } else { // fists
-      g.beginPath(); g.arc(34, 24, 13, 0, Math.PI * 2); g.fill();
-      g.beginPath(); g.arc(62, 24, 13, 0, Math.PI * 2); g.fill();
-    }
-    const w = WEAPONS[kind];
+    this.drawWeaponShape(g, kind, 0, 0, 1);
     this.weaponIcon.dataset.kind = kind;
+  }
+
+  // Weapon slots: the four weapons as a GTA-style strip — number,
+  // silhouette, current slot gold-bordered, locked slots dimmed with
+  // a padlock. Never a text list.
+  drawWeaponSlots(current, unlocked) {
+    const g = this.slotsCtx;
+    if (!g) return;
+    const order = ['fists', 'pistol', 'smg', 'rifle'];
+    const W = 48, H = 40, GAP = 4;
+    g.clearRect(0, 0, 204, 44);
+    g.font = '700 11px Arial, sans-serif';
+    g.textAlign = 'center';
+    order.forEach((kind, i) => {
+      const x = i * (W + GAP);
+      const isCurrent = kind === current;
+      const isOpen = !unlocked || unlocked.has(kind);
+      g.fillStyle = isCurrent ? 'rgba(245,197,24,0.25)' : 'rgba(10,8,18,0.6)';
+      g.fillRect(x, 4, W, H);
+      g.strokeStyle = isCurrent ? '#f5c518' : 'rgba(255,255,255,0.35)';
+      g.lineWidth = isCurrent ? 2 : 1;
+      g.strokeRect(x + 0.5, 4.5, W - 1, H - 1);
+      g.fillStyle = isCurrent ? '#ffd700' : 'rgba(255,255,255,0.85)';
+      g.fillText(String(i + 1), x + 9, 15);
+      g.save();
+      g.globalAlpha = isOpen ? 1 : 0.3;
+      g.fillStyle = '#ffffff';
+      this.drawWeaponShape(g, kind, x + 2, 6, 0.42);
+      g.restore();
+      if (!isOpen) { // padlock: shackle arc + body.
+        g.strokeStyle = '#ffffff';
+        g.lineWidth = 1.5;
+        g.beginPath(); g.arc(x + 36, 26, 5, Math.PI, 0); g.stroke();
+        g.fillStyle = '#ffffff';
+        g.fillRect(x + 30, 26, 12, 9);
+      }
+    });
   }
 
   setAmmo(mag, reserve, infinite) {
@@ -239,10 +287,37 @@ export class Hud {
     if (b) b.style.width = `${Math.round(condFrac * 100)}%`;
   }
 
-  // REP rank label under the radar REP bar (e.g. RUNNER).
-  setRepLabel(rank) {
+  // REP rank label under the radar REP bar, with the bare REP number
+  // (e.g. RUNNER · 500 REP) — a rank is a name plus a number.
+  setRepLabel(rank, rep) {
     if (!rank) return;
-    if (this.repLabelEl.textContent !== rank) this.repLabelEl.textContent = rank;
+    const text = rep != null ? `${rank} · ${rep} REP` : rank;
+    if (this.repLabelEl.textContent !== text) this.repLabelEl.textContent = text;
+  }
+
+  // Location pill above the radar: district + day + clock (e.g.
+  // MERCADO · DAY 1 · 18:24). Persistent, updated only on change.
+  setLocation(districtId, day, time) {
+    if (!this.locationEl || !districtId) return;
+    const name = (DISTRICTS[districtId]?.name || districtId).toUpperCase();
+    const text = `${name} · DAY ${day} · ${time}`;
+    if (this.locationEl.dataset.text !== text) {
+      this.locationEl.dataset.text = text;
+      this.locationEl.innerHTML = `${name} · <span class="loc-time">DAY ${day} · ${time}</span>`;
+    }
+  }
+
+  // Race countdown (M:SS), visible only while a race stage runs.
+  setTimer(raceT) {
+    if (!this.timerEl) return;
+    if (!raceT || raceT <= 0) {
+      this.timerEl.style.visibility = 'hidden';
+      return;
+    }
+    const m = Math.floor(raceT / 60), s = Math.floor(raceT % 60);
+    const text = `${m}:${String(s).padStart(2, '0')}`;
+    if (this.timerEl.textContent !== text) this.timerEl.textContent = text;
+    this.timerEl.style.visibility = 'visible';
   }
 
   // Transient helpers: show, then fade after `ms`.
@@ -277,8 +352,8 @@ export class Hud {
       `<span class="radio-mark">\u266A</span><b>${station.name}</b><i>${track}</i>`, ms, 'radio');
   }
 
-  showPopup(text, color = '#f5c518') {
-    this.transient(this.popupEl, `<span style="color:${color}">${text}</span>`, 2000, 'pop');
+  showPopup(text, color = '#f5c518', ms = 2000) {
+    this.transient(this.popupEl, `<span style="color:${color}">${text}</span>`, ms, 'pop');
   }
 
   // pos 'corner' docks the card top-left at a smaller size, so a
@@ -322,10 +397,17 @@ export class Hud {
       this._weapon = state.weapon;
       this.drawWeaponIcon(state.weapon);
     }
+    const slotKey = state.weapon + '|' + [...(state.unlocked || [])].sort().join(',');
+    if (slotKey !== this._slots) {
+      this._slots = slotKey;
+      this.drawWeaponSlots(state.weapon, state.unlocked);
+    }
     const w = WEAPONS[state.weapon];
     this.setAmmo(state.mag, state.reserve, !isFinite(w.mag));
     this.setSpeed(state.speedKmh, state.driving);
     this.setCarName(state.carName, state.carCond, state.driving);
-    this.setRepLabel(state.rank);
+    this.setRepLabel(state.rank, state.rep);
+    this.setLocation(state.district, state.day, state.time);
+    this.setTimer(state.raceT);
   }
 }
