@@ -258,16 +258,30 @@ export class Police {
         c.speed = 8;
       }
       // Intercept point: where the player will be, plus a wobble so the
-      // cruisers don't stack into a single file.
-      const tx = pp.x + pv.x * 0.45 + Math.sin(t * 0.7 + c.wobble) * 3;
-      const tz = pp.z + pv.z * 0.45 + Math.cos(t * 0.7 + c.wobble) * 3;
+      // cruisers don't stack into a single file. Staging-only escort
+      // (c.escort, set by the chase shot): hold a fixed formation slot
+      // beside the player — lateral + ahead offsets in the player's
+      // frame — and match the player's speed, so the flank pair stays
+      // visibly adjacent instead of converging onto the hero's line and
+      // hiding behind the hero car. Live play never sets it; the
+      // cruiser is removed when wanted drops to 0, so it cannot leak.
+      let tx, tz, top;
+      if (c.escort) {
+        const h = player.heading || 0;
+        tx = pp.x + Math.sin(h) * c.escort.ahead + Math.cos(h) * c.escort.lat;
+        tz = pp.z + Math.cos(h) * c.escort.ahead - Math.sin(h) * c.escort.lat;
+        top = playerSpeed + 2;
+      } else {
+        tx = pp.x + pv.x * 0.45 + Math.sin(t * 0.7 + c.wobble) * 3;
+        tz = pp.z + pv.z * 0.45 + Math.cos(t * 0.7 + c.wobble) * 3;
+        // c.top is a staging-only override (the chase shot's flank pair):
+        // without it a staged cruiser decays to topSpeed within ~1 s and
+        // the hero rear-ends it before the capture. Live play never sets
+        // it — fresh spawns get the default cap. Cleared by setWanted(0).
+        top = c.top ?? topSpeed;
+      }
       const wantHeading = Math.atan2(tx - m.position.x, tz - m.position.z);
       c.heading = turnToward(c.heading, wantHeading, 2.6 * dt);
-      // c.top is a staging-only override (the chase shot's flank pair):
-      // without it a staged cruiser decays to topSpeed within ~1 s and
-      // the hero rear-ends it before the capture. Live play never sets
-      // it — fresh spawns get the default cap. Cleared by setWanted(0).
-      const top = c.top ?? topSpeed;
       c.targetSpeed = d > 25 ? top : top * 0.92;
       c.speed += (c.targetSpeed - c.speed) * Math.min(1, dt * 1.5);
       m.position.x += Math.sin(c.heading) * c.speed * dt;
