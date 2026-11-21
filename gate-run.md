@@ -1581,13 +1581,15 @@ See the table below. Verdict: **no renames** — every one of the 33 files has a
   - Gemini text/copy review (gemini-3.8-flash, helper
     ~/workspace/custom-connectors/custom.gemini/bin/
     gemini_api.py; build/gate1-gemini.py sent the same review
-    prompt + full diff): attempt 1 read-timed-out after ~182 s;
-    attempt 2 (retry) HTTP 503 "This model is currently
-    experiencing high demand." Per the house rule the Gemini
+    prompt + full diff): THREE attempts, all failed — attempt 1
+    read-timed-out after ~182 s; attempt 2 (retry) HTTP 503
+    "high demand"; attempt 3 (final retry at gate time) HTTP 503
+    again. No more retries. Per the house rule the Gemini
     503/timeout skip is NOT a Gate 1 FAIL — but Gemini is the
     text/copy reviewer, not the code reviewer, so the CODE
     review remains outstanding. Raw logs in
-    build/gate1-review-gemini.log + gate1-retry-out.txt.
+    build/gate1-review-gemini.log + gate1-retry-out.txt +
+    gate1-retry2-out.txt.
   - Xingchiapi was NOT used (forbidden by the task).
   - The review exchange is recorded here (attempts, models,
     errors) and as raw logs in the build dir; the verdict
