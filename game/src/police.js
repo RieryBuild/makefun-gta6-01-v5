@@ -152,7 +152,10 @@ export class Police {
     spot.position.y = 0.15;
     this.scene.add(spot);
     g.userData.rotor = rotor;
-    this.heli = { mesh: g, spot, beam, angle: 0, height: 42, aimAhead: 0 };
+    // hold freezes the orbit angle: the chase shot parks the heli at
+    // the staged angle so the beam lands in the frame. Live play never
+    // sets it (newGame() / continueGame() clear it when the heli lives).
+    this.heli = { mesh: g, spot, beam, angle: 0, height: 42, aimAhead: 0, hold: false };
     this.group.add(g);
   }
 
@@ -260,7 +263,12 @@ export class Police {
       const tz = pp.z + pv.z * 0.45 + Math.cos(t * 0.7 + c.wobble) * 3;
       const wantHeading = Math.atan2(tx - m.position.x, tz - m.position.z);
       c.heading = turnToward(c.heading, wantHeading, 2.6 * dt);
-      c.targetSpeed = d > 25 ? topSpeed : topSpeed * 0.92;
+      // c.top is a staging-only override (the chase shot's flank pair):
+      // without it a staged cruiser decays to topSpeed within ~1 s and
+      // the hero rear-ends it before the capture. Live play never sets
+      // it — fresh spawns get the default cap. Cleared by setWanted(0).
+      const top = c.top ?? topSpeed;
+      c.targetSpeed = d > 25 ? top : top * 0.92;
       c.speed += (c.targetSpeed - c.speed) * Math.min(1, dt * 1.5);
       m.position.x += Math.sin(c.heading) * c.speed * dt;
       m.position.z += Math.cos(c.heading) * c.speed * dt;
@@ -308,7 +316,7 @@ export class Police {
     // Heli: orbit the player, beam + spotlight tracking them.
     if (this.heli) {
       const h = this.heli;
-      h.angle += dt * 0.25;
+      if (!h.hold) h.angle += dt * 0.25;
       const hx = pp.x + Math.cos(h.angle) * 26;
       const hz = pp.z + Math.sin(h.angle) * 26;
       h.mesh.position.set(hx, h.height, hz);
