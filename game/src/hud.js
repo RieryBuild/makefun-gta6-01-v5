@@ -42,6 +42,8 @@ export class Hud {
     this.missionCardEl = el('hud-missioncard');
     this.bigCardEl = el('hud-bigcard');
     this.repFloatEl = el('hud-repfloat');
+    this.carNameEl = el('hud-carname');
+    this.repLabelEl = el('hud-replabel');
     this.timers = {};
     this.flashDamageUntil = 0;
     this.portraits = {};
@@ -225,6 +227,24 @@ export class Hud {
     this.speedEl.innerHTML = `${Math.round(kmh)}<span>km/h</span>`;
   }
 
+  // Vehicle name + condition, shown above the speedo while driving.
+  // Icon-first: the name is text (the car model is the identity) and
+  // the condition is a thin bar, no extra labels.
+  setCarName(name, condFrac, driving) {
+    if (!driving || !name) { this.carNameEl.style.visibility = 'hidden'; return; }
+    this.carNameEl.style.visibility = 'visible';
+    const t = this.carNameEl.querySelector('#hud-carname-text');
+    if (t && t.textContent !== name) t.textContent = name;
+    const b = this.carNameEl.querySelector('#bar-carcond');
+    if (b) b.style.width = `${Math.round(condFrac * 100)}%`;
+  }
+
+  // REP rank label under the radar REP bar (e.g. RUNNER).
+  setRepLabel(rank) {
+    if (!rank) return;
+    if (this.repLabelEl.textContent !== rank) this.repLabelEl.textContent = rank;
+  }
+
   // Transient helpers: show, then fade after `ms`.
   transient(elm, html, ms, key) {
     elm.innerHTML = html;
@@ -252,22 +272,27 @@ export class Hud {
       `<div class="nc-name">${name}</div>${sub ? `<div class="nc-sub">${sub}</div>` : ''}`, 4000, 'nc');
   }
 
-  showRadio(station, track) {
+  showRadio(station, track, ms = 4000) {
     this.transient(this.radioEl,
-      `<span class="radio-mark">\u266A</span><b>${station.name}</b><i>${track}</i>`, 4000, 'radio');
+      `<span class="radio-mark">\u266A</span><b>${station.name}</b><i>${track}</i>`, ms, 'radio');
   }
 
   showPopup(text, color = '#f5c518') {
     this.transient(this.popupEl, `<span style="color:${color}">${text}</span>`, 2000, 'pop');
   }
 
-  showMissionCard(title, sub) {
+  // pos 'corner' docks the card top-left at a smaller size, so a
+  // staged chase frame can show the mission brief without the centred
+  // card covering the pursuit. Live play always uses the centred card.
+  showMissionCard(title, sub, ms = 3000, pos) {
+    this.missionCardEl.classList.toggle('corner', pos === 'corner');
     this.transient(this.missionCardEl,
-      `<div class="mc-title">${title}</div><div class="mc-sub">${sub}</div>`, 3000, 'mc');
+      `<div class="mc-title">${title}</div><div class="mc-sub">${sub}</div>`, ms, 'mc');
   }
 
   hideMissionCard() {
     this.missionCardEl.classList.remove('show');
+    this.missionCardEl.classList.remove('corner');
     clearTimeout(this.timers.mc);
   }
 
@@ -300,5 +325,7 @@ export class Hud {
     const w = WEAPONS[state.weapon];
     this.setAmmo(state.mag, state.reserve, !isFinite(w.mag));
     this.setSpeed(state.speedKmh, state.driving);
+    this.setCarName(state.carName, state.carCond, state.driving);
+    this.setRepLabel(state.rank);
   }
 }
