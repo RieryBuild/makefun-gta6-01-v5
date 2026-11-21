@@ -1155,6 +1155,17 @@ See the table below. Verdict: **no renames** — every one of the 33 files has a
 
 - **GATE PASS** (MQ1–MQ8 + Gates 0–2). The builder STOPs here:
   no seal, no submit — the coordinator seals + submits.
-- Remote HEAD after the PAT push: (filled in by the push step below).
+- Remote HEAD after the PAT push: **7883b5ff4a72d8b38a170a27472808945a8a7cb1**
+  (RieryBuild/makefun-gta6-01-v5 @ main). Push via the PAT Git
+  Data/Contents API, changed files only, in 4 resumable runs
+  (build/push-round7*.log — the GitHub API kept dropping connections
+  with RemoteDisconnected; each run skipped the files already in
+  sync by blob sha, per the verify-before-retry rule): 17 files
+  pushed — 10 game files + shots.json + 4 screenshots + scorecard.md
+  + gate-run.md (last, commit 76f72ec84cd396f17de331af50c79a3327fcf6bd).
+  The orphan screenshots/3-map.jpg was deleted from the remote
+  (commit 7883b5ff). Tree verification (build/verify-push.py):
+  remote tree EXACTLY matches the local tree — 0 missing, 0
+  mismatched, 0 extra (53 files).
 - The round-7 session completes cleanly with a prompt so the
   usage row is written.
