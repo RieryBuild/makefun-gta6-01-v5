@@ -46,6 +46,7 @@ body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff;
 .bar .fill.health.low { background: #ff4444; }
 .bar .fill.armor { background: #4a90d9; }
 .bar .fill.rep { background: #f5c518; }
+#hud-replabel { margin-top: 3px; font-size: 12px; letter-spacing: 2px; color: #f5c518; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 
 #hud-bottom-right { position: absolute; right: 20px; bottom: 18px; text-align: right; }
 #hud-speed { font-family: 'Passion One', sans-serif; font-size: 30px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
@@ -53,6 +54,10 @@ body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff;
 .weapon-row { display: flex; align-items: flex-end; gap: 10px; justify-content: flex-end; }
 #weapon-icon { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
 #hud-ammo { font-family: 'Passion One', sans-serif; font-size: 26px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+#hud-carname { margin-bottom: 2px; visibility: hidden; }
+#hud-carname-text { font-family: 'Passion One', sans-serif; font-size: 22px; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+.carcond-bar { width: 150px; height: 6px; margin: 3px 0 0 auto; background: rgba(0,0,0,0.55); border-radius: 3px; overflow: hidden; }
+#bar-carcond { height: 100%; background: #2ecc71; border-radius: 3px; transition: width 0.2s; }
 
 /* Transient elements: invisible until .show, then fade out. */
 .transient { opacity: 0; transition: opacity 0.35s; }
@@ -103,6 +108,10 @@ body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff;
 }
 .mc-title { font-family: 'Passion One', sans-serif; font-size: 54px; letter-spacing: 2px; color: #ffd27a; }
 .mc-sub { font-size: 20px; color: rgba(255,255,255,0.9); }
+/* Corner variant: docked top-left, compact, for the staged chase frame. */
+#hud-missioncard.corner { left: 20px; top: 16px; transform: none; text-align: left; }
+#hud-missioncard.corner .mc-title { font-size: 30px; letter-spacing: 1px; }
+#hud-missioncard.corner .mc-sub { font-size: 16px; }
 #hud-bigcard {
   position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
   text-align: center; text-shadow: 0 4px 16px rgba(0,0,0,0.9);
