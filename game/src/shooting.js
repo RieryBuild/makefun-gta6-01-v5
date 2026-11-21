@@ -118,14 +118,13 @@ export class Shooting {
   spawnTracer(from, to) {
     const len = from.distanceTo(to);
     if (len < 0.5) return;
-    // Radius 0.045, orange: at 0.02 the tracer was sub-pixel at combat
-    // range and never read in the frame; at 0.035 in pale yellow it
-    // still vanished against the bright sunset buildings. A thicker
-    // orange round reads against tan and pink alike, in play and on
-    // screen.
-    const geo = new THREE.CylinderGeometry(0.045, 0.045, 1, 5, 1, true);
+    // Tapered (0.028 at the muzzle, 0.012 at the hit point) and a touch
+    // thinner than v5's uniform 0.045: the uniform round read as a fat
+    // white beam across the whole combat frame. A taper reads as a
+    // shot, not a slab, against the bright sunset buildings.
+    const geo = new THREE.CylinderGeometry(0.012, 0.028, 1, 5, 1, true);
     const mat = new THREE.MeshBasicMaterial({
-      color: 0xffb84d, transparent: true, opacity: 0.95,
+      color: 0xffb84d, transparent: true, opacity: 0.9,
       blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
     });
     const m = new THREE.Mesh(geo, mat);
