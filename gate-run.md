@@ -619,3 +619,542 @@ grader-faithful harness; the game, the screenshots, and the dossier
 are unchanged. The SUBMIT decision belongs to the parent/coordinator
 (push via PAT, seal 01a1f136, submit round 6) — no seal, no submit
 from this session.
+
+
+---
+
+# Round 7 — revision "PUERTO DEL SOL" (targeted, NOT a rebuild)
+
+- Revision session: this session (builder session id in the final
+  report to the coordinator; the coordinator writes the usage row).
+- Recording: **01a1fcdf-790a-7789-ac8d-802d0d43fa84, LIVE since
+  2026-11-21T06:51:xxZ (node PID 19722)**, started BEFORE this
+  session. Usage file /home/hatch/.makefun/muse-usage-gta6-01-v6.jsonl
+  (coordinator writes it after this session completes cleanly).
+- Standing entry: round 6 **01a1f14b-c259-76bf-a19d-b5aea59fd0b2**,
+  repo RieryBuild/makefun-gta6-01-v5 @ d12dfb7f, **rank #562/8,929**
+  at MQ5 time (21 Nov ~15:05 WITA; #555/8,907 at 14:30 WITA —
+  the field grew, our judge value is unchanged), judge **989,409**
+  [983,258–995,560], 12W-0L provisional — outside the top-100
+  prizelist. Force_Last supersede is intended.
+- Scope (P0–P3 only): P0 re-stage the cover chase with a DIFFERENT
+  staging idea than the failed flank attempt (rear-view: cruisers
+  visibly BEHIND the hero car at its rear quarters + roadblock
+  ahead; heli + beam cone IN the frame; denser icon-first HUD);
+  P1 one MISSION PASSED frame as 5th shot, judged on evidence;
+  P2 more committed orange-sunset palette + varied building
+  silhouettes; P3 file/function-name audit for criterion 5.
+  No rebuild, no re-typing of whole files (v3 lesson).
+- Quota at MQ5 time (kit CLI status, 21 Nov ~15:00 WITA):
+  can_submit true, day cap 5 / taken 0 / left 5 (resets
+  2026-11-22T00:00:00Z), hard limit 40 / left 34,
+  entries_made 6, entries_kept 3. Entries close 24 Nov 23:00 WITA.
+- Dossier-cap watch: text **163,824 B** measured on the current
+  tree before any edit (cap 163,840 — 16 B headroom; buildDossier
+  truncates gracefully past the cap, it does not throw). Re-measure
+  after the edits; the cut already sits inside facekit.js (196 of
+  263 lines shown, 15 files + 129,831 B left out — pre-existing
+  v5 state, not caused by this revision).
+
+## MQ5 (round 7): brief + LIVE top-5 analysis — PASS (recorded BEFORE any build writes, per Reza's sequencing rule)
+
+### Brief summary (re-read fresh 21 Nov ~15:00 WITA: live requirements API + kit competition.yaml + RULES.txt; deadline + caps unchanged vs v5)
+
+- **Task:** most complete, highest-quality open-world crime game
+  in the spirit of GTA 6; offline in a desktop browser from static
+  files under game/ (game/index.html); keyboard + mouse; NO network
+  request; three.js or any library vendored under game/. Everything
+  original — NO Rockstar name/logo/character/map/asset.
+- **Completeness counts most** (criterion 1): city on foot and by
+  car, traffic and pedestrians, cars to steal, a wanted level and
+  police, missions and a story, combat, a HUD with a minimap, a
+  start and a save, and polish.
+- **Scoring — pairwise AI judge, win rate (Bradley-Terry,
+  millionths).** Judge = z-ai/glm-5.3-flash, reasoning effort high.
+  Each game = 2 calls (both orders); each call scores the picked
+  entry 0.5 + margin/10 (margin 1–5). Final: 3 Swiss rounds over
+  every final entry + 4 house anchors, then a playoff over exactly
+  the top 100 (each pair once). **Playoff entries place above EVERY
+  non-playoff entry whatever the rates.** Final judges every entry
+  afresh — **dev rating counts for NOTHING in the final.**
+- **What the judge sees (1,536 input tokens/entry):** ONE JPEG
+  contact sheet of every screenshot — the COVER (first screenshot
+  by name) LARGE on top, the others small beneath — plus a SHORT
+  source outline (file paths, sizes, first declarations). **The
+  cover matters most.** Source files must be split with one clear
+  job each, named for what they do (criterion 5 reads the names).
+- **Judge rubric (5 criteria, most important first; the FIRST
+  criterion on which two entries differ decides, unless a later one
+  differs by much more):** (1) complete open world SHOWN IN
+  SCREENSHOTS — city on foot and by car, traffic and pedestrians,
+  wanted level with police who respond, missions; (2) depth and fun
+  — missions and a story, vehicles to steal and drive, activities
+  and combat, progression; (3) feel and polish — controls and a
+  camera that answer well, a HUD with a minimap, effects and menus;
+  (4) look and originality — a coherent sun-soaked modern city of
+  its own, lighting and art direction, own names/characters/story;
+  (5) structure — the outline shows source split into files with
+  one clear job each, named for what they do.
+- **Deliverables / caps (unchanged):** public GitHub repo (OSI
+  license), main.ts (Node 22, STDLIB ONLY, runs twice
+  byte-identical, ≤10 s/run), vendor/makefun-game.ts unchanged,
+  game/ static files, 3–4 screenshots under screenshots/ (real
+  renders, never edited/composited/borrowed), sealed recordings.
+  game/ ≤993 files/dirs, ≤48 MiB; index.html ≤1 MiB; screenshots
+  3–4, each ≤256 KiB, long side ≤1280, short side ≥480 px;
+  dossier ≤1.5 MiB, text ≤160 KiB.
+- **Money:** $1,666, 100 places: 1st $500, 2nd $250, 3rd $150,
+  4th–10th $38, 11th–25th $10, 26th–50th $6, 51st–100th $4.
+  Entries close 2026-11-24T15:00:00Z (24 Nov 23:00 WITA);
+  result due 10 Dec 23:00 WITA.
+
+### Live top-5 analysis (leaderboard API + all 5 cover artifacts viewed by THIS builder, 21 Nov ~15:00 WITA, field 8,929)
+
+- **Rates (values.judge, millionths):** #1–#5 TIED at **993,977**
+  (99.3977%, 12-0-0, interval [989,470–998,484]). #10 993,343;
+  #20 993,343; #50 992,703; **rank-100 prizelist cutoff 992,057**
+  (lucky-raven-62, "Solmar Bay"). **OURS: #562, 989,409
+  [983,258–995,560], 12-0-0.** Gap to cutoff: **2,648 micro**
+  (was 2,726 at the 19 Nov 02:40 gate; the cutoff rose
+  989,409 → 990,081 → 992,057 while our judge value never moved —
+  rank #265 → #562 is the field growing 6,286 → 8,929, not our
+  score falling). Our interval still overlaps the cutoff's
+  [986,817–997,296].
+- **THE DECIDER IS STILL MARGIN, NOT WINS.** Every top entry is
+  12-0-0. Rates differ only by the judge's MARGIN. The field has
+  turned over completely since 18 Nov: only klencho survives from
+  the old top 5 (now #5); ryanp #2, saputra #9, el-net #11,
+  dimdam #10. Four of the current top 5 were received 19 Nov —
+  the board rewards FRESH, dense chase covers.
+- **Top 5 (cover artifacts downloaded to
+  build-v6/top5-r7/rank{1-5}/, each viewed full-size by this builder):**
+  - #1 madsrepo "Karimbu, Isle of Embers" 01a1eb7c (received 17 Nov):
+    rear chase cam, orange hero car centre-low, cruisers ahead,
+    heli top-centre, mission card (MISSION 6, STAGE 3/4, NEXT),
+    police table (KPD RESPONSE, 6 units, RAMMING/FLANKING),
+    weapon slots + crew ability cards, dialogue with portrait,
+    minimap with location name, 111 km/h + car name + condition,
+    radio. Bright arcade daylight, beach + palms.
+  - #2 hazel-harbor-63 "TANGERINE MILE" 01a1f2a4 (19 Nov 07:10):
+    rear chase cam on a beachfront avenue, red hero car, white
+    cruiser RIGHT ON THE HERO'S TAIL (RAMMING 6 m), heli distant
+    with its beam as a light pool on the road, police table right
+    (RAMMING/PURSUIT/RESPONDING + distances), wanted stars,
+    day/time, health/armour/respect bars, weapon slots, dialogue
+    with police portrait, circular minimap, 73 km/h + car name +
+    condition + radio. Orange sunset. The tailgating cruiser is
+    what makes the pursuit read — the chaser is BEHIND the hero,
+    not ahead of it.
+  - #3 tidy-orca-63 "BRISA BAY" 01a1f2eb (19 Nov 08:28): rear chase
+    cam on a bridge, red hero car, heli ABOVE with a HUGE white
+    searchlight cone slanting onto the road ahead, dispatch table
+    (RAMMING 7 m/13 m, SPOTLIGHT, CLOSING IN, ROADBLOCK + "+1 more
+    unit · roadblock ahead"), explosion + cruisers at the roadblock
+    ahead, weapon slots, "IN SIGHT — Air One has you in the
+    light", circular minimap, health/armour, REP rank, dialogue
+    with portrait, car name + condition + 61 MPH, radio. The beam
+    cone is the single most legible pursuit signal in the top 5.
+  - #4 plntky "LUMEN BAY" 01a1f3b8 (19 Nov 12:12): rear chase cam,
+    red hero car centre, TWO cruisers FLANKING AT THE HERO'S REAR
+    QUARTERS (left + right, light bars flashing, both large at the
+    frame edges), heli top-centre with a BIG beam cone onto the
+    road, explosion + roadblock ahead, peds on the sidewalks,
+    mission card (timer 0:23, 3/5, NEXT) + crew ability chips,
+    dialogue with portrait, weapon slots, 123 km/h + car name +
+    condition + armour/health bars, radio, circular minimap with
+    streets. Dusk. This frame sells the pursuit with ZERO need to
+    read its police table — flankers + beam + explosion do it
+    visually. It is the closest thing to a template for our P0,
+    adapted to our own staging (not copied).
+  - #5 klencho "GOLDEN HOUR KINGS" 01a1f47f (19 Nov 15:48): rear
+    chase cam in a downtown canyon, red hero car, BIG heli upper
+    frame with rotor, dispatch table (RAMMING 5 m/10 m, SPOTLIGHT,
+    FIRING, ROADBLOCK + "+4 more units"), WANTED banner, weapon
+    slots, dialogue with portrait, 113 km/h + car name + condition,
+    radio, circular minimap with search ring. Purple/orange
+    golden hour. The heli is IN the frame and large — ours is not.
+- **Principles extracted (NO-COPY — the technique, not the surface):**
+  1. The pursuit reads from GEOMETRY, not text: a chaser BEHIND
+     the hero (tailgating or at the rear quarters) + a heli beam
+     cone slanting onto the road ahead + a roadblock/explosion
+     ahead. All five covers stage at least two of the three.
+     Ours stages NONE of the three legibly (all cruisers ahead,
+     heli off-frame, beam a vertical slab, roadblock dissolved
+     into traffic).
+  2. HUD density can be icon-first: mission card with number +
+     stage + NEXT, car name + condition bar, big speed, radio
+     pill, REP bar/rank, weapon slots, dialogue with portrait,
+     minimap with location + converging blips. The police table
+     is the one element we do NOT adopt (Reza's direction, kept).
+  3. The heli must be IN the frame: every top-5 cover shows the
+     heli body. Ours shows only its beam. (Measured cause: at
+     height 24 m / 26 m orbit radius, the heli sits ~39° above
+     the chase camera's horizon while the frame top is ~+18° —
+     it cannot appear. P0 must lower it and hold its angle.)
+  4. Palette: the top 5 are all COMMITTED warm — tangerine,
+     golden hour, dusk orange, purple/orange. Our beige/pale
+     facades + pale sky are the outlier (scorecard + teardown
+     agree). P2 commits the orange.
+  5. A reward moment earns a slot: #2's set (18 Nov study)
+     proved MISSION PASSED carries a frame. P1 shoots it as the
+     5th frame and lets the evidence decide.
+- **Our 4 shipped frames viewed full-size by this builder before
+  the revision (21 Nov ~15:00 WITA):** 2-title STRONG, 3-map
+  STRONG, 4-combat STRONG except the tracer (a fat white beam
+  dominating the frame diagonally — the "overcooked" note in the
+  v5 scorecard, confirmed on sight) and a white beacon pillar at
+  the left edge; 1-chase MEDIUM (beam a vertical white slab, no
+  heli, cruisers ahead read as traffic, the right-hand white car
+  cropped and reading as parked, HUD sparse: one-line objective,
+  $1,200, 3 stars, dark minimap, speed + ammo only — no mission
+  number/stage, no car name/condition, no radio, no REP label).
+- **Supersede confirmation:** round 7 is a TARGETED REVISION of
+  the standing round-6 entry (01a1f14b, #562, outside the
+  prizelist) under Force_Last — intended. It is the cover-fix pass
+  the v5 coordinator's verdict explicitly named as the next step
+  ("a different staging idea than the flank attempt — a rear-view
+  camera with cruisers visibly BEHIND the hero car + the roadblock
+  ahead, or a cruiser mid-ram at the hero's quarter panel"), not a
+  second rebuild trigger for the same submission and not a
+  duplicate: the game code, the judged set's title/map frames, and
+  the systems are unchanged; the cover staging, the HUD density,
+  the palette commitment, and (if the evidence supports it) one
+  frame are revised in-session under recording 01a1fcdf.
+- **Not a duplicate:** the revision changes the cover frame (new
+  staging, new HUD elements, new palette values), re-shoots all 5
+  frames fresh, rewrites the scorecard fresh, and re-gates from
+  MQ1. The title/map/combat frames are re-shot on the revised
+  code and kept only if they still read STRONG.
+
+## (Round-7 gate sections MQ1–MQ4, MQ6–MQ8 + Gates 0–2 are at the end of this file, after the build record — MQ5 above is the pre-build record.)
+
+## Round-7 build record (P0–P3) — what changed, per item
+
+Baseline before edits: `node playtest.cjs --play` on the v5 code (build-v6 harness, 21 Nov ~15:20 WITA): **28/28 checks PASS, 0 game errors** — then the harness itself failed on the `page.reload` for the Continue test (Navigation timeout 120 s, SwiftShader under a loaded VM). Re-run attempt 2 failed the same way at the FIRST `goto` (concurrent diag Chrome starving it). Lesson: run browser jobs ONE at a time on this VM. The reload timeout was raised to 300 s in the v6 harness copy (build dir only). The 28/28 + the v5 final 30/30 on the same code stand as the baseline; the final `--all` run below must be 30/30.
+
+### P0 — re-stage cover chase (5 diag iterations, all measured)
+
+- **Iteration 1 (rear-quarter, cz+1, ±4.2):** diag JSON: cruisers NDC (-0.54,-0.23) / (0.26,-0.27) — flanks filled the bottom corners; the hero's 2 m rear read smaller than the cruisers' 4.4 m flanks. Frame: heli + beam + mission card + radio + car name + REP all read, speedo 132 — but the hero was buried. REJECTED (diag-chase-r7-v1.jpg).
+- **Iteration 2 (flank ahead, cz-4, ±3.6):** hero caught the pair by t=0.47 and pushed it; speedo collapsed to 80 (screenshot) / 97 (diag). REJECTED (r7-v2).
+- **Root cause found (read the code, not guessed):** pursuit caps cruisers at `15 + wanted*1.6` = 19.8 m/s, and `player.carVsTraffic` multiplies hero speed by 0.75 EVERY frame while within 3.2 m of a cruiser. Any staged cruiser the hero can reach before the capture kills the speedo. The capture window is load-dependent (t=0.4–1.0), so margins are sized for t=1.0.
+- **Iteration 3 (cz-8, same cap):** same failure at t=0.72 (86 km/h, nose-to-tail) — the intercept steering converges the pair onto the hero's line. REJECTED (r7-v3).
+- **Fix:** `police.js` gains a per-cruiser staging-only `c.top` override (`const top = c.top ?? topSpeed`); staging sets `top: 34` on the flank pair only. Fresh spawns never set it; `setWanted(0)` clears it — live play unchanged.
+- **Iteration 4 (cz-8, ±3.6, top 34):** hero free at 123 (diag) / 137 (screenshot); pair at 28.7 m/s, 6–7 m ahead — but stacked (both x≈-41.3), reading as one dark car. Frame otherwise STRONG. (r7-v4.)
+- **Iteration 5 (cz-8, ±5, opposite wobble 0 / π):** hero 137 (diag) / **151 km/h** (screenshot); pair staggered and reading as TWO cruisers (PSPD visible on the left one). Frame STRONG. **FROZEN.** (diag-chase-r7-v5.jpg.)
+- Final chase staging: flank pair cz-8, ±5 m, speed 26, top 34, wobble 0/π; ahead pair cz-24/-30; roadblockDist 18; heli angle -π/2-0.45, height 13 m, hold=true, aimAhead 15; cam distScale 0.8, drivePitch 0.12 (new knob, default 0.22, reset in newGame()/continueGame()).
+- **HUD density (icon-first, no text police table):** corner mission card (`showMissionCard(..., ms, 'corner')` + CSS, top-left, 30px title); car name + condition bar above the speedo (`#hud-carname`, `hud.setCarName`, game.js passes `carName`/`carCond`); radio re-shown 120 s (`showRadio` ms param); REP rank label under the radar bars (`#hud-replabel`, `hud.setRepLabel`, game.js passes `growth.rank.name`). Chase frame shows: JOB 1/8 · FIRST LIGHT / STAGE 1/2, RADIO SOL 92.5 Sunset Sounds, Solstice GT + green condition bar, RUNNER, 3 stars, $1,200, radar blips converging, Teo subtitle + portrait.
+- **Beam + tracer:** heli beam now slants diagonally onto the road with a visible pool (height 13 + aimAhead 15 + hold). Tracer tapered in `shooting.js` (CylinderGeometry 0.012 top / 0.028 muzzle, opacity 0.9) — v5's uniform 0.045 read as a fat white beam.
+
+### P1 — one MISSION PASSED frame (5th shot)
+
+- New staging branch `?shot=passed`: `newGame()` then `game.story.completeStage()` ×2 through the REAL stage machine — the MISSION PASSED card, +$800 / +100 REP, Pistol unlock and autosave are all genuine, not a mock. Ro on foot on the avenue by the safehouse (-40,152, facing the camera), Solstice parked beside her (-36,148), foot camera low in front of her face; bigCard + Teo's win line re-shown 120 s. `5-passed.jpg` added to the shoot list (replaces 5-city). Placement decided from the viewed frames below.
+
+### P2 — palette more committed (orange sunset); varied silhouettes
+
+- `palette.js` (all byte-neutral hex swaps): fog 0xdd8a63→0xe87a45, sunColor 0xffd9a0→0xffc27a, rimColor 0xff9a5c→0xff7a3d, CENTRO facades cool grey-blue→warm dusk mauve, COLINAS cream→warmer sand.
+- `structures.js`: `buildDeco` crown step varies by seed (1.0 vs 1.8 m); `buildMarketRow` gains a setback upper floor (60% width, 2.5 m + trim cap) on every third row — inside the base footprint, no new collider. Both deterministic (block seed).
+
+### P3 — file/function name audit (criterion 5)
+
+See the table below. Verdict: **no renames** — every one of the 33 files has a descriptive name matching its single job. The closest overlaps (streetkit vs structures vs skyline vs terrain; growth vs story; world vs game) are distinct jobs, not duplicates.
+
+| File | One job | Name matches? |
+|---|---|---|
+| boot.js | Entry point: query parsing, game construction, shot wiring, debug hooks | yes |
+| brands.js | Brand textures (signs, billboards) | yes |
+| camerawork.js | Camera modes (foot/drive/aim/cinematic/title) + boom collision | yes |
+| cast.js | Characters + dialogue lines | yes |
+| cityplan.js | City layout data: avenues, streets, districts, POIs | yes |
+| collectibles.js | Sun Shells + stashes (pickups) | yes |
+| controls.js | Keyboard/mouse input | yes |
+| crowd.js | Pedestrians: spawn, walk lines, flee alarm | yes |
+| enemies.js | Crew enemies: spawn, AI, health | yes |
+| facekit.js | Procedural faces (portraits + 3D heads) | yes |
+| game.js | Game state machine, loop, missions hooks, HUD wiring, save | yes |
+| growth.js | Progression: cash, REP, ranks, unlocks, stats, shells | yes |
+| hud.js | All HUD: radar, bars, cards, subtitles, speedo | yes |
+| humanoid.js | Humanoid meshes (Ro, peds, crew bodies) | yes |
+| landmarks.js | Landmark structures (lighthouse, Ferris wheel, pier, TORRE SOL) | yes |
+| menus.js | Title/pause/map/game-over screens | yes |
+| palette.js | Colour palette (sky, fog, districts, lights) | yes |
+| persistence.js | Save/load (localStorage) | yes |
+| player.js | Player: on-foot movement + driving + weapons + rams | yes |
+| police.js | Police: cruisers, heli + beam, roadblock, bust timer | yes |
+| rng.js | Seeded RNG + math helpers (clamp, damp, turnToward) | yes |
+| shooting.js | Aimed fire, tracers, muzzle flash, damage numbers | yes |
+| skyline.js | Sky + sun/moon + lights | yes |
+| sound.js | Sound: engine, sirens, radio stations, blips | yes |
+| staging.js | Screenshot staging (`?shot=...` setups) | yes |
+| story.js | Mission data + stage machine | yes |
+| streetkit.js | Street props (sidewalks, lamps, signs, hydrants) | yes |
+| structures.js | Buildings by district archetype (tower/deco/warehouse/marketRow/villa) | yes |
+| surface.js | Shared textures (glow, facade, awning, signs) | yes |
+| terrain.js | Ground, beach, water, roads | yes |
+| traffic.js | Traffic cars + parked cars | yes |
+| vehicles.js | Car classes + meshes (hero, sedan, cruiser, etc.) | yes |
+| world.js | World assembly: renderer, scene, layers, colliders, diagnostics | yes |
+
+### Harness notes (build dir only, not submission)
+
+- `diag-chase.cjs` (new): serves the entry on :8093, loads `?shot=chase`, waits the same capture floor as the shoot, dumps projected NDC positions for hero/cruisers/heli/roadblock/traffic + HUD state to `diag-chase-<label>.json` + a JPEG. 5 iterations run (v1–v5). On error it now kills its server (an orphaned serve from the first timed-out run held :8093 until killed by hand).
+- `playtest.cjs`: SHOTS 5-city → 5-passed; `page.reload` timeout 120 s → 300 s; `protocolTimeout: 600000` (a busy SwiftShader renderer held one CDP call past the 180 s default on the loaded VM). Assertions unchanged (30).
+
+### Round-7 completion notes (after the build record above)
+
+- **Passed-frame t=4 bug (found by the first full shoot, fixed, verified):**
+  the first `--shots` run (final-shots2.log, 5/5 PASS) captured
+  5-passed.jpg AFTER t=4 game-s — mission 2 had auto-started,
+  `hideBigCard()` ran and `onMissionStart` replaced the subtitle, so
+  the frame showed Ro + Solstice + $2,000 but NO "MISSION PASSED"
+  card and NO subtitle. Fix (staging.js, `?shot=passed` branch):
+  `game.nextMissionT = 999;` right after the two `completeStage()`
+  calls — same freeze pattern as the map shot. Verified by
+  `diag-passed.cjs` (t=0.47: bigCard show=true, subtitle true) and
+  by the single-shot re-shoot (final-shot-passed.log: PASS,
+  123,645 B @q82, 8,812 draw calls) — the new frame shows the huge
+  gold MISSION PASSED + "+$800 · +100 REP · Pistol" + Teo's win line.
+- **Re-shoots under a loaded VM (environmental, not game bugs):**
+  re-run 1 (final-shots3.log) failed shot 5 — "screenshot failed 3x"
+  (SwiftShader compositor refused the capture on the heaviest page,
+  5th in the session); re-run 2 (final-shots4.log) failed shot 4 —
+  `ERR_INSUFFICIENT_RESOURCES` loading the game's modules + the
+  180 s `__shotReady` wait timed out (34 Chrome processes from other
+  sessions, load ~7-8). Fix: `playtest.cjs` gains `--shot=<name>`
+  (single-shot mode, fresh browser per shot — build dir only). The
+  passed frame was re-shot alone and PASSED. The placed set is:
+  1-chase + 2-title from re-run 2, 4-combat from re-run 1,
+  3-passed from the single-shot run — all on the final code (the
+  `nextMissionT` fix lives only in the `?shot=passed` branch, which
+  the other shots never execute).
+- **Placement (decided from the viewed frames):** 1-chase, 2-title,
+  3-passed, 4-combat. The passed frame displaces the map: the map's
+  evidence class (open world + mission list + stats) is partly
+  covered by the title ("Eight jobs") and the chase mission card,
+  while the passed frame adds a class the set lacked entirely (the
+  reward moment) and lifts the weakest v5 category (Rewards 2→2.5).
+  The map frame stays as the spare in the build dir. Naming note:
+  the plan said "4-passed.jpg" — the evidence decision put the
+  passed frame in the map's slot, so it is **3-passed.jpg** and
+  combat stays 4-combat.jpg; shots.json updated to match.
+- **Play-test final (final-play4.log): 30/30, 0 errors.** The first
+  two final runs got 28/28 and died on the Continue step (reload
+  wait 120 s, then the reload request itself with
+  ERR_INSUFFICIENT_RESOURCES); the third run died at the FIRST load
+  the same way. Fix (harness only): the Continue step now closes
+  the page and opens a FRESH page in the same browser for the
+  reload — localStorage is per-origin, so it is the same Continue
+  test — and the `__pds` wait is 300 s. Result: continue enabled
+  after save + restores cash/REP/missions/position exactly
+  (saved={cash:4981, rep:550, done:[borrowed-wheels, dockside,
+  first-light], x:84, z:-116} restored identical).
+- **Determinism + dossier (21 Nov ~09:20 UTC):** main.ts (node22)
+  twice into two fresh output dirs → **byte-identical** (diff -r
+  clean). Dossier text **163,809 B** (cap 163,840 — 31 B headroom);
+  dossier.json 768,776 B (cap 1.5 MiB). Cut still inside facekit.js
+  (166/263 lines shown; 15 files + 138,900 B left out). The text
+  sits at the cap by design (the builder fills to it); the round-7
+  growth in the shown files (index.html +161 B, game.js, structures.js)
+  shrank facekit's shown head by ~30 lines — no cap risk.
+- **Scorecard:** deleted + rewritten fresh (scorecard.md, 13,243 B):
+  **2.45 avg** (v5: 2.30), zero automatic failures. PIL metrics on
+  the placed frames: chase 6.39/0.110/62.4/0.144, title
+  7.18/0.038/53.9/0.147, passed 6.80/0.109/58.4/0.179, combat
+  5.83/0.166/60.2/0.127.
+- **Gate 1 (below):** OpenRouter nemotron-3-ultra-550b-a55b:free,
+  PASS, no findings, 14,099 tokens, cost $0. Gemini text/copy
+  SKIPPED — 3 attempts (2.5-flash 404 retired; 3.8-flash hung 120 s,
+  then errored) — recorded gap, NOT a FAIL.
+- **Tree verification (before the push):** fresh clone of
+  RieryBuild/makefun-gta6-01-v5 @ d12dfb7f; diff vs the working tree
+  shows EXACTLY the 10 game files + gate-run.md changed (the round-7
+  set) and nothing else. The full unified diff is in
+  build-v6/round7-diff.txt (+217/-62 lines).
+
+## MQ1 (round 7): Can this entry be submitted RIGHT NOW, end to end? — PASS
+
+1. Competition: gta6-01 — entries close 2026-11-24T15:00:00Z
+   (re-read fresh 21 Nov ~15:00 WITA, unchanged; ~3 days ahead).
+2. Deliverables: game/ 40 files, 956,667 B; index.html 5,346 B;
+   screenshots 4 × ≤256 KiB (108,103 / 118,493 / 123,645 / 99,652 B);
+   shots.json (1-chase, 2-title, 3-passed, 4-combat); LICENSE,
+   .makefun/owner.json (6do8), serve.ts, README.md, scorecard.md
+   (2.45), main.ts (unchanged this round — the dossier is built from
+   game/ sources only). The round-7 commit is a NEW commit (the
+   10 changed game files + shots.json + screenshots + scorecard.md +
+   this gate record) — the builder pushes it via the PAT route and
+   records the remote HEAD; the coordinator seals + submits.
+3. Checks: every applying check met — play-test 30/30, 0 errors on
+   the final code (MQ6); determinism byte-identical; dossier text
+   163,809 B ≤ 163,840; dossier.json 768,776 B ≤ 1.5 MiB;
+   screenshots viewed full-size. No "probably".
+4. Submit path: coordinator submits via the kit CLI with the new
+   commit SHA + all SIX recordings (the five sealed v5 ones +
+   the live round-7 01a1fcdf, sealed by the coordinator after this
+   session). Builder does not submit (STOP after gate PASS).
+5. Cost: time ~10 min to submit; capital $0.
+
+## MQ2 (round 7): Does this entry clear the competition's bar? — PASS
+
+- The round-7 entry is the standing v5 (judge 989,409, 12W-0L, rank
+  #562/8,929 at 21 Nov ~15:00 WITA, cutoff #100: 992,057) with a
+  targeted revision: the cover pursuit now reads (Obstacles 2→2.5),
+  the judged set gains the reward moment (Rewards 2→2.5), the
+  palette is more committed (Art direction 2→2.5) — scorecard 2.45
+  vs v5's 2.30, zero automatic failures. The bar analysis from the
+  v5 gate stands, strengthened. No grade is quoted as a promised
+  outcome.
+
+## MQ3 (round 7): Is the submission window actually open for this account? — PASS
+
+- Quota via the kit CLI (`status --competition gta6-01 --json`,
+  21 Nov ~15:00 WITA, re-read fresh for MQ5): **can_submit true**;
+  day cap 5, taken 0, left 5 (resets 2026-11-22T00:00:00Z); hard
+  limit max 40, left 34; entries_made 6, entries_kept 3.
+  Deadline 2026-11-24T15:00:00Z is ~3 days ahead.
+- Read-only check only — NO submit was attempted by this session.
+
+## MQ4 (round 7): Is the entry signed by the right identity, through the right route? — PASS (unchanged)
+
+- Wallet 6do8 ONLY (.makefun/owner.json, untouched). The round-7
+  commit is pushed via the GitHub PAT route by this builder (this
+  session pushes — the task orders it, changed files only, then
+  verifies the tree); the coordinator seals + submits. No other
+  wallet, no other route. NEVER `git push` from the local repo
+  (its root commit a83983e holds only main.ts + gate-run.md).
+
+## MQ6 (round 7): Can you prove the entry works — beyond "it should work"? — PASS
+
+- Play-test on the FINAL code: 30/30, 0 errors (final-play4.log,
+  build dir). All 28 gameplay checks pass on the first run too
+  (final-play.log: m1 $800+100 REP, m2 $1,200, rifle kill at 30 m,
+  m3 $2,500 + 4×$50 bounties, REP+250, rank RUNNER, Sun Shell +$100,
+  waterline clamp, pause/map, BUSTED 10% fine, WASTED 10% bill);
+  the Continue step is proven in the final run (restores exactly).
+- Determinism byte-identical (main.ts twice); dossier text
+  163,809 B ≤ cap; screenshots placed fresh and viewed full-size;
+  scorecard 2.45, zero automatic failures.
+- The two failed intermediate runs (final-play2/3.log) are
+  environmental only (ERR_INSUFFICIENT_RESOURCES on the reload /
+  first load under a loaded VM) — the game code is untouched by
+  the harness fixes, and the final run is 30/30.
+
+## MQ7 (round 7): Is this entry on the never-submit list? — PASS (no match)
+
+- No code-drawn images (screenshots are real renders of the game).
+- main.ts unchanged this round, stdlib-only (readdirSync is node:fs).
+- Recording 01a1fcdf-790a-7789-ac8d-802d0d43fa84 started 21 Nov
+  14:51 WITA — BEFORE this session's first build action (first
+  entry-dir write ~15:20 WITA); in-session revision present (the
+  P0–P3 edits + this gate record).
+- Wallet 6do8 only; repo via the PAT route (MQ4). No claim codes
+  anywhere (none issued for round 7; none in the repo/chat/
+  transcript). No secrets in the repo (grep clean at gate time:
+  no API keys, no private keys, no tokens; the only wallet address
+  in the tree is owner.json's 6do8).
+- can_submit true, 5 left today (MQ3). Entry needs no capital ($0).
+- No grade quoted as a promised outcome (MQ2).
+- Not a duplicate (MQ5). Visual change present — the scorecard +
+  frames were re-verified this round (Gate 3, parent decides).
+
+## MQ8 (round 7): Session check — PASS (sixth session, covered)
+
+1. Round-7 session ecd86ab2-ea6b-4ec7-b139-e3f1270b202b /
+   recording 01a1fcdf-790a-7789-ac8d-802d0d43fa84 — P0–P3 revision +
+   this gate record. The five earlier recordings (01a1eeef,
+   01a1ef13, 01a1efa5, 01a1efdb, 01a1f136) remain sealed and listed;
+   round 7 lists all SIX (coverage is the union).
+2. Recording start 2026-11-21T14:51 WITA — BEFORE this session's
+   first build action (first entry-dir write ~15:20 WITA).
+3. First action: reading the brief + live top-5 (MQ5, recorded
+   before any build writes).
+4. Coverage: recording LIVE through the whole revision (PID 19722,
+   checked alive before the final entry-dir writes — 02:44:20
+   elapsed at the last check). Seal is the coordinator's job after
+   this session completes cleanly.
+5. In-session revision: the P0–P3 edits + screenshots + scorecard +
+   this gate record are all in-session. thinking_revised is met.
+
+## Gate 0 (round 7): Reality — PASS
+
+- [x] Entry passes its play-test (30/30, 0 errors) on the final
+  code (MQ6).
+- [x] Every deliverable from /requirements is in the tree (MQ1).
+- [x] Evidence captured: play-test logs (28/28 + 30/30 final),
+  determinism diff, dossier measurement, fresh-clone tree diff,
+  quota response, Gate 1 raw exchange (build/gate1-review.log),
+  Gemini skip log (build/gemini-copy-review.log), PIL metrics
+  (build/scorecard-metrics-final.log), diag iterations (build/
+  diag-chase-r7-v1..v5.jpg + diag-passed-v1.jpg).
+- [x] Repo push: this builder pushes via the PAT route (changed
+  files only) and records the new remote HEAD below; the
+  coordinator verifies it before submit.
+
+## Gate 1 (round 7): Quality — PASS
+
+- [x] Multi-model review done — review of the FULL round-7 diff
+  (10 files, +217/-62 lines, build/round7-diff.txt):
+  code/reasoning reviewed by nvidia/nemotron-3-ultra-550b-a55b:free
+  via OpenRouter (custom.openrouter helper; GET /models re-checked
+  first — 441 models, 11 :free, nemotron still listed), cost $0,
+  14,099 tokens (10,123 prompt / 3,976 completion; raw in
+  build/gate1-review.log). Verdict PASS, no findings raised: all
+  staging knobs are set only by staging.js and reset to v5 defaults
+  in both newGame() and continueGame(); the passed shot completes
+  mission 1 via the real story machine and freezes nextMissionT=999;
+  chase geometry (8 m flank lead, top=34, opposite wobble) keeps
+  cruisers outside the 3.2 m collision radius through t=1.0;
+  structures.js crown/setback changes stay inside base footprints;
+  HUD additions match the new DOM elements with proper visibility
+  toggling and no timer leaks; palette.js is hex-only.
+  - Gemini text/copy review SKIPPED — 3 attempts, all failed:
+    gemini-2.5-flash generateContent → HTTP 404 (model retired);
+    gemini-3.8-flash → hung past the 120 s client timeout, then
+    errored on the 300 s retry (traceback truncated by the helper).
+    The models endpoint itself answers (GET /v1beta/models lists
+    gemini-3.8-flash). Gap recorded here; per the house rule that
+    is NOT a Gate 1 FAIL. The copy changed only in HUD strings
+    already visible in the viewed frames (mission card, radio pill,
+    passed card), and the OpenRouter review covered the code that
+    renders them.
+- [x] The review exchange is recorded (model, verdict, findings)
+  here and as raw JSON in the build dir.
+- [x] Practice grade N/A (judged/visual competition) — the evidence
+  is the top-5 study + review + scorecard, stated as evidence, never
+  a promised outcome (MQ2).
+- [x] Feed-first study done for this revision (MQ5 round 7): live
+  top-5 analysis + principles, recorded before any build writes.
+
+## Gate 2 (round 7): Dedup — PASS
+
+- [x] Not a duplicate of the standing entry (MQ5) — this is a
+  targeted revision of the standing v5 entry under Force_Last;
+  the supersede is intended (round 7 replaces round 6's 01a1f14b).
+- [x] Rebuild-once rule respected: this is a revision, not a
+  rebuild — targeted edits only, no file re-typed (the v3 failure
+  mode is avoided by construction; the diff is +217/-62 lines
+  across 10 files, with no whole-file rewrites).
+- [x] Quota re-checked at gate time via the competition's own
+  endpoint (MQ3: can_submit true, 5 left today, 34 under hard limit).
+
+## Gate 3 (round 7): Submission quality — PARENT DECIDES (Reza audit; visual change present)
+
+- [x] README matches the requirements template (unchanged).
+- [x] Entry message + signature use wallet 6do8 only; repo via PAT route (MQ4).
+- [x] Claim-code handling confirmed: no claim codes issued for
+  round 7; none in the repo, chat, or transcripts.
+- [x] No secrets in the repo (grep clean at gate time).
+- [x] Deadline still ahead at submit time (~3 days, MQ1/MQ3).
+- [ ] Reza visual audit — FRESH ROUND NEEDED: game/ and
+  screenshots/ CHANGED this round (cover re-stage, new passed
+  frame, palette, silhouettes). The parent decides whether Reza
+  audits the new frames before submit. The builder's evidence:
+  all four placed frames viewed full-size this round + scorecard
+  2.45 + 30/30 play-test.
+
+## Decision (Round 7)
+
+- **GATE PASS** (MQ1–MQ8 + Gates 0–2). The builder STOPs here:
+  no seal, no submit — the coordinator seals + submits.
+- Remote HEAD after the PAT push: (filled in by the push step below).
+- The round-7 session completes cleanly with a prompt so the
+  usage row is written.
