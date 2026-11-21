@@ -13,7 +13,7 @@ export const SKY = {
   horizonFar: 0xffb36b,  // pale gold away from the sun
   sunCore: 0xffe9a8,     // the sun disc itself
   sunGlow: 0xff9a3d,     // the halo around it
-  fog: 0xdd8a63,         // warm haze — fog IS the palette, not a wall
+  fog: 0xe87a45,         // warm haze — fog IS the palette, not a wall
   fogNear: 120,
   fogFar: 520,
   cloudLit: 0xffc9a3,    // cloud bellies catch the sun
@@ -24,12 +24,12 @@ export const SKY = {
 };
 
 export const LIGHT = {
-  sunColor: 0xffd9a0,    // warm key light
+  sunColor: 0xffc27a,    // warm key light
   sunIntensity: 1.35,
   hemiSky: 0x8a6bb0,     // violet fill from the sky
   hemiGround: 0x5a3a4a,  // warm dark bounce
   hemiIntensity: 0.75,
-  rimColor: 0xff9a5c,    // the sunset rim on hero + cars
+  rimColor: 0xff7a3d,    // the sunset rim on hero + cars
   rimIntensity: 0.9,
   ambient: 0x604a6a,
   ambientIntensity: 0.35,
@@ -41,7 +41,7 @@ export const LIGHT = {
 export const DISTRICTS = {
   CENTRO: {
     name: 'CENTRO', sub: 'Downtown',
-    facades: [0x8a93a6, 0x6e7a90, 0x9aa3b5, 0x5d6a80],
+    facades: [0x9a7a8c, 0x7a5a72, 0xa8889a, 0x6a4a5e],
     trim: 0x3a4356, glass: 0x2c3e55, glassLit: 0xffd27a,
     accent: 0x4a90d9, ground: 0x6a6f7a,
   },
@@ -65,7 +65,7 @@ export const DISTRICTS = {
   },
   COLINAS: {
     name: 'COLINAS', sub: 'The Hills',
-    facades: [0xf0ead8, 0xe8ddc4, 0xd8e0c8, 0xe0d0b8],
+    facades: [0xe8c9a0, 0xd8b088, 0xc8a878, 0xd0b898],
     trim: 0x8a7a5a, glass: 0x3a4a5a, glassLit: 0xffd27a,
     accent: 0x6a9a5a, ground: 0x7a8a6a,
   },
