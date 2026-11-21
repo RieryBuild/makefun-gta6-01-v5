@@ -1644,11 +1644,20 @@ See the table below. Verdict: **no renames** — every one of the 33 files has a
   review after the 2026-11-22 00:00 UTC reset, appends the
   verdict here, and completes the gate (fix + full re-gate from
   MQ1 if the review raises findings), then seals + submits.
-- Remote HEAD after the PAT push: **(recorded below after the
-  push runs)** (RieryBuild/makefun-gta6-01-v5 @ main). Push via
-  the PAT Git Data/Contents API, changed files only
-  (build/push-gta6-01-v7.py): 6 game files + shots.json +
-  4 screenshots + scorecard.md + gate-run.md (last), plus the
-  deletion of screenshots/3-passed.jpg from the remote (its own
-  commit). Tree verification (build/verify-push-r8.py): remote
-  tree must EXACTLY match the local tree for all changed files.
+- Remote HEAD after the PAT push: **f0ccadb202417042290465b90892dcf09cad1261**
+  (RieryBuild/makefun-gta6-01-v5 @ main). Push via the PAT Git
+  Data/Contents API, changed files only
+  (build/push-gta6-01-v7.py, run log push-r8-run1.log): 12 files
+  pushed — 6 game files + shots.json + 3 screenshots
+  (2-title.jpg byte-identical to r7, skipped in sync) +
+  scorecard.md + gate-run.md (last, commit
+  35ab4bfbcbc0fbe43da2b77661a6fbf56993c1dc); one transient
+  RemoteDisconnected on style.css, retried and landed
+  (verify-before-retry). The orphan screenshots/3-passed.jpg was
+  deleted from the remote (commit f0ccadb202417042290465b90892
+  dcf09cad1261, delete-orphan-r8.log). This gate record was then
+  re-pushed once more with the final HEAD filled in (the head
+  that contains this text). Tree verification
+  (build/verify-push-r8.py): remote tree EXACTLY matches the
+  local tree — 0 missing, 0 mismatched, 0 extra (53 files),
+  3-passed.jpg gone.
