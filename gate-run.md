@@ -1169,3 +1169,486 @@ See the table below. Verdict: **no renames** — every one of the 33 files has a
   mismatched, 0 extra (53 files).
 - The round-7 session completes cleanly with a prompt so the
   usage row is written.
+
+## MQ5 (round 8): brief + LIVE top-5 analysis — PASS (recorded from the pre-build study; the study governed every edit below)
+
+### Brief summary (re-read fresh 21 Nov ~20:52 WITA: live requirements API + quota + kit competition.yaml + RULES.txt; deadline + caps unchanged vs round 7)
+
+- **Task / scoring / rubric / deliverables / caps:** unchanged from
+  round 7 (see MQ5 round 7 above). Entries close
+  2026-11-24T15:00:00Z (24 Nov 23:00 WITA); result due 10 Dec.
+  Money $1,666, 100 places. Quota re-verified live at gate time
+  (MQ3 below).
+- **Kit route for this round (parent correction, 21 Nov ~21:00
+  WITA):** local kit checks use the FRESH level-33 kit
+  (~/workspace/makefun-work/gta6-01-kit-33/gta6-01-kit/, tarball
+  gta6-01-kit33.tar.gz) with `--worktree` — the plain check reads
+  the local 2-file root commit a83983e and false-fails
+  license_osi. The level-20 CLI path in the state file is the
+  fallback only. Security notices: a kit-output DOWNLOAD
+  SUGGESTION (curl-pipe) is ignored, never followed, and does NOT
+  stop the build; a notice about REPO CONTENT in a dir the work
+  requires means STOP + report to the parent. No bundle --dry-run
+  (the full discovery scan OOM-killed on this host); the recorder
+  state is the check for this recorded-route entry (healthy at
+  build start: seq 77 / acked 3009).
+
+### Live top-5 analysis (fresh leaderboard pull by THIS builder, 21 Nov ~20:52 WITA, field 9,267; all 5 cover artifacts + ours r6/r7 viewed pixel-level in-session)
+
+- **Board has NOT moved materially since the coordinator's 20:41
+  pull:** same top 5, same order, all 12W-0D-0L. #1 madsrepo
+  "Karimbu", #2 hazel-harbor-63 "TANGERINE MILE", #3 tidy-orca-63
+  "BRISA BAY", #4 plntky "LUMEN BAY", #5 klencho "GOLDEN HOUR
+  KINGS". Our standing r7 01a1fda7 #2604/9,232 (20:30 watch),
+  regressed from r6 01a1f14b #594 — both 12W-0L, the margin
+  dropped. The round-8 target is the ROUND-6 level + the live
+  top 5, NOT an iteration of round 7's direction.
+- **What I verified myself on the live covers (files in
+  ~/workspace/makefun-work/gta6-01-top5-live/, viewed full-size):**
+  every top-5 cover carries 10+ systems at once — numbered
+  mission card + stage + NEXT, police-response panel with NAMED
+  units + distances + statuses (6–9 units), weapon slots, big
+  money ($6,420–$86,250), wanted stars (3–5, big), day/time
+  (DAY 9 · 18:40, 17:19, 18:45, 18:48), health/armour bars,
+  REP/rank with a NAME (FIXER, SHOT CALLER, RESPECT LV 4), a
+  portrait dialog with a named character + role, a circular
+  minimap WITH converging police blips + location name, big speed
+  + vehicle name + condition %, radio station + song, a timer,
+  a heli with a spotlight cone + ground pool, and a cruiser
+  visibly CLOSE (right behind the hero in #2, flanking both rear
+  quarters in #4, ramming at 5–7 m in #3/#5). Palettes are
+  committed sunset/pink-orange/teal; beach/coastal in 4 of 5.
+- **Ours r7 cover (viewed full-size):** better than r6 (numbered
+  mission card, radio pill, heli + cone, vehicle name +
+  condition, 146 km/h) but still ~3–4 systems vs 10+: no
+  response panel, no weapon slots, no REP number, no
+  location/day/time/timer, minimap near-empty, and — the
+  decisive miss — NO cruiser visibly adjacent in the judged
+  frame. The r7 diag claimed flank/ram cruisers + roadblock +
+  ground pool, but the judged 1-chase.jpg shows none of them
+  adjacent: the diag itself proves why (r7-v5 JSON: flank pair
+  converged to x -39.6/-39.4, NDC x 0.02/0.04 — dead behind the
+  hero car from the chase camera, invisible).
+- **Ours r6 cover (viewed full-size):** one small objective line,
+  $1,200, 3 small stars, near-empty minimap, thin bars, one
+  dialog line, crude white heli column, police indistinguishable
+  from traffic.
+- **Principles extracted (NO-COPY):** (1) the pursuit reads from
+  GEOMETRY — a chaser held at the hero's flank/rear quarters,
+  not from a panel; (2) HUD density is a system count per frame —
+  every top-5 cover is a checklist of 10+ named systems, and the
+  judge's criterion 1 is read off that density; (3) the minimap
+  must show CONVERGENCE — blips visibly closing on the player
+  arrow, not a scatter; (4) the reward/score moment belongs in
+  the cover itself (DRIFT/NEAR MISS popups, a timer counting
+  down); (5) the map/progression screen is the densest
+  completeness proof — 4 of 5 top-5 sets carry one, and the
+  canonical set is chase + combat + map + title.
+- **Regression diagnosis (agrees with the coordinator):** r7's P1
+  (map frame → MISSION PASSED) is the prime structural suspect —
+  it drops the map screen the top 5 all carry and violates the
+  canonical set (#3 swaps TITLE for passed, never the map). The
+  cover re-stage (P0) is NOT indicted — it moved the right way
+  but not far enough on density. Round 8 therefore restores the
+  canonical set and pushes cover density within the icon-first
+  constraint (NO text police table — Reza's direction, kept).
+- **Our 4 shipped r7 frames viewed full-size by this builder
+  before the revision:** 2-title STRONG, 4-combat STRONG (the r7
+  tracer fix verified on sight: thin tapered streak, -50 damage
+  numbers, no fat white beam), 3-passed STRONG as a frame but
+  WRONG for the slot (see diagnosis), 1-chase MEDIUM (see above).
+  The r7 map spare (build-v7/shots-raw/3-map.jpg) is STRONG:
+  8 jobs, 6 districts, 16 POI, stats, SAVE SLOT 1 21% — it
+  returns to the judged set.
+
+### Round-8 scope (targeted revision; NOT a rebuild; NOT a re-type)
+
+1. RESTORE the map frame: re-shoot 3-map.jpg in-session; REMOVE
+   3-passed.jpg from screenshots/ + repo. Judged set = 1-chase +
+   2-title + 3-map + 4-combat. (MISSION PASSED stays an in-game
+   moment via the ?shot=passed staging, not a judged frame.)
+2. COVER DENSITY PUSH, icon-first: weapon slots (4 slots, current
+   gold, locked dimmed + padlock), bigger money/stars, REP/rank
+   with the bare REP number, location pill + day/time (new
+   in-game clock: DAY 1 · 18:24 at sunset), race-countdown timer
+   element (real story.raceT — shows during race stages; verified
+   by a dedicated probe, not in the chase frame, which is
+   mission 1), minimap with BIGGER police blips + leader lines
+   toward the player arrow + bigger objective diamond, escort
+   cruisers visibly adjacent (new staging-only formation hold in
+   police.js — the r7 intercept steering is what hid them),
+   heli cone + ground pool moved onto open asphalt ahead of the
+   hero (aimAhead 15 → 8 m), driving-score popup (the game's real
+   'NEAR MISS  +$250' string). Keep r7's mission card, radio
+   pill, vehicle name/condition. NO text police table.
+3. COMBAT frame: r7 tracer fix verified in the judged
+   4-combat.jpg — no re-shoot needed beyond the fresh --shots run.
+4. DOSSIER TEXT: update for the map frame; verify the exact UTF-8
+   byte count stays ≤163,840 (r7: 163,809 B — the text is capped
+   by buildDossier, which cuts sources past the cap; the gate
+   check is the byte count, and the cut point is kept near-neutral
+   by trimming comments in the dossier-included files I touch).
+5. Do NOT reintroduce the run_completes bug: main.ts untouched
+   (wipes CONTENTS only, never the /output directory itself).
+
+### Round-8 build record — what changed, per item
+
+- **Baseline before edits:** main.ts determinism verified 2×
+  byte-identical on the r7 tree BEFORE any edit
+  (/tmp/r8-base1 vs /tmp/r8-base2, diff -r clean; dossier text
+  163,809 UTF-8 bytes; the text already cuts 15 files / 138,900
+  bytes of source past the cap, cutting mid-facekit.js — the
+  standing r7 state, not a regression).
+- **Chase diag iterations (build-v7/diag-chase-r8-v*.jpg + .json):**
+  v1 (escort + HUD density, before the parked-car fix): HUD all
+  green (money $12,450, stars 3, RUNNER · 500 REP, MERCADO ·
+  DAY 1 · 18:24, NEAR MISS +$250 popup shown, slots 8,118
+  painted px, mission card + radio shown) but both escort
+  cruisers buried behind parked sedans (pink at -44/-54, white
+  at -36/-47 — the traffic re-route misses parked cars, which
+  don't move). v2: diag-only run confirming the parked-car
+  positions (nearVehicles dump added to the diag). v3 (after the
+  parked-car slide): BOTH escort cruisers clearly visible
+  flanking the hero at the front quarters (black PSPD + decals,
+  NDC x ±0.30), 146 km/h, heli + beam + ground pool on open
+  asphalt — the frame reads as a pursuit at a glance. v3 is the
+  frozen chase.
+- **Files changed (targeted edits only, no whole-file rewrites):**
+  game/index.html (slots canvas, location pill, timer div);
+  game/style.css (money 34→42 px, stars 26→32 px, replabel
+  12→14 px, slots/location/timer styles); game/src/hud.js
+  (weapon-slots strip, location pill, race timer, REP number,
+  bigger radar blips + convergence leader lines + bigger
+  objective diamond, showPopup duration param); game/src/police.js
+  (staging-only escort formation hold); game/src/game.js
+  (in-game clock DAY 1 · 18:24, +1 min per 10 game-s; HUD state
+  gains unlocked/rep/district/day/time/raceT); game/src/staging.js
+  (escort flank pair, staged cash $12,450, heli aimAhead 8 m,
+  parked-car slide, NEAR MISS popup re-show); shots.json
+  (3-passed → 3-map); build-v7 harness only (BUILD v6→v7,
+  SHOTS drops 5-passed, diag HUD dump + nearVehicles dump,
+  probe-timer.cjs). main.ts UNTOUCHED.
+- **Timer note (honest):** the race-countdown element is a real
+  mechanic (story.raceT, mission 6 SUNSET STRIP stage 1, time
+  150) and is PROVEN by probe-timer.cjs (PASS: raceT 149.2,
+  timer "2:29" visible) — but the chase frame is mission 1
+  (goto stages, no race timer), so the judged cover carries the
+  DAY/TIME clock + the driving-score popup instead of a
+  countdown. Putting a countdown IN the cover would need the
+  chase re-staged on mission 6's beachfront race — flagged as
+  the follow-up option for the coordinator, not smuggled in here
+  by staging a race the frame isn't running.
+- **Supersede confirmation:** round 8 is a TARGETED REVISION of
+  the standing round-7 entry (01a1fda7, #2604, outside the
+  prizelist) under Force_Last — intended. It is not a second
+  rebuild trigger for the same submission and not a duplicate:
+  the game code, title/combat frames, and systems are unchanged
+  in kind; the cover staging + HUD density + the judged set's
+  third slot are revised in-session under recording
+  01a1fe25-0535-72b2-a6ff-f90e04f7c1ec. Quota: can_submit YES
+  (see MQ3).
+- **Not a duplicate:** the revision changes the cover frame (new
+  escort staging, new HUD elements, parked-car slide), restores
+  the map frame, re-shoots all 4 frames fresh, rewrites the
+  scorecard fresh, and re-gates from MQ1. The title/combat
+  frames are re-shot on the revised code and kept only if they
+  still read STRONG.
+
+### Round-8 completion notes (after the build record above)
+
+- **Play-test on the FINAL code: 34/34, 0 errors**
+  (final-play-r8.log in the build dir; the harness grew from r7's
+  30 checks — m3 bounty breakdown, Sun Shell pickup, waterline
+  clamp, parked-car steal). Cash math exact: m1 $800 +100 REP
+  (1200→2000), m2 $1,200 (→3200), m3 $2,500 + 4×$50 bounties,
+  REP +250, rank RUNNER; BUSTED 10% fine + respawn at PSPD
+  Central; WASTED 10% bill + respawn at hospital; Continue
+  restores cash/REP/missions/position exactly.
+- **Screenshots placed fresh** (shots-raw/ → screenshots/,
+  md5-verified identical): 1-chase 116,743 B, 2-title 118,493 B,
+  3-map 92,133 B, 4-combat 103,987 B — all ≤256 KiB, 1280×720.
+  screenshots/3-passed.jpg DELETED from the entry dir (and from
+  the repo at push time, its own commit).
+- **All 4 final frames viewed full-size by this builder** (see
+  scorecard.md Placement): 1-chase STRONG (escort flankers
+  visible at the front quarters, 132 km/h, heli + cone + pool,
+  NEAR MISS +$250 popup), 2-title STRONG, 3-map STRONG
+  (restored), 4-combat STRONG (r7 tracer fix verified in the
+  FINAL frame: thin tapered streak, -50 numbers).
+- **Scorecard rewritten fresh: 2.45 avg**, zero automatic
+  failures (scorecard.md, 14,041 B). PIL metrics on the placed
+  frames: chase 6.37/0.107/67.8/0.153, title 7.18/0.038/53.9/
+  0.147, map 4.86/0.128/39.6/0.072, combat 5.89/0.167/60.4/0.131.
+- **Determinism + dossier (21 Nov ~13:32 UTC):** main.ts
+  (node22) twice into two fresh output dirs → **byte-identical**
+  (diff -r clean). Dossier text **163,808 B** (cap 163,840 —
+  32 B headroom, 1 B under r7's 163,809 — the comment trims kept
+  it byte-neutral as designed); dossier.json 744,065 B (cap
+  1.5 MiB). Cut still inside facekit.js (standing r7 state).
+- **Kit check (fresh level-33 kit + --worktree, 21 Nov ~13:33
+  UTC): 4 passed, 0 failed, 17 skipped, 5 checked at
+  submission.** competition_open PASS, snapshot PASS (53 files,
+  1,565,844 B), license_osi PASS (MIT), entrypoint PASS
+  (main.ts selects node22). The 5 at-submission items
+  (repo_public, repo_owner, repo_created_after_open,
+  commit_in_repo, duplicate_snapshot) are the site's at submit.
+  The kit also printed a level note (this copy level 33, the
+  site at level 34) carrying a download suggestion — per the
+  parent correction, class (a): the suggestion was IGNORED, no
+  download was run, the build continued. No repo-content notice
+  appeared.
+- **Timer probe PASS** (probe-timer.cjs): mission 6 race stage
+  via the real story machine — raceT 149.2, timer "2:29"
+  visible, 0 errors.
+- **Gate 1: BLOCKED — no independent review obtained** (see
+  Gate 1 below). OpenRouter :free daily quota exhausted (429;
+  reset 2026-11-22 00:00 UTC); Gemini gemini-3.8-flash timed
+  out, then 503'd on retry. This is a reviewer outage, not an
+  entry defect — but the gate cannot be claimed PASS until the
+  review runs. The coordinator re-runs it after the reset (the
+  exact command is in Gate 1).
+
+## MQ1 (round 8): Can this entry be submitted RIGHT NOW, end to end? — PASS (deliverables; Gate 1 review outstanding — see Decision)
+
+1. Competition: gta6-01 — entries close 2026-11-24T15:00:00Z
+   (re-read fresh 21 Nov ~20:52 WITA, unchanged; ~3 days ahead).
+2. Deliverables: game/ 40 files, 962,063 B; index.html 5,501 B;
+   screenshots 4 × ≤256 KiB (116,743 / 118,493 / 92,133 /
+   103,987 B); shots.json (1-chase, 2-title, 3-map, 4-combat);
+   LICENSE, .makefun/owner.json (6do8), serve.ts, README.md,
+   scorecard.md (2.45), main.ts (unchanged this round — the
+   dossier is built from game/ sources only). The round-8 commit
+   is a NEW commit (the 6 changed game files + shots.json +
+   4 screenshots + scorecard.md + this gate record, plus the
+   deletion of screenshots/3-passed.jpg) — the builder pushes it
+   via the PAT route and records the remote HEAD; the coordinator
+   seals + submits.
+3. Checks: every applying check met — play-test 34/34, 0 errors
+   on the final code (MQ6); determinism byte-identical; dossier
+   text 163,808 B ≤ 163,840; dossier.json 744,065 B ≤ 1.5 MiB;
+   screenshots viewed full-size; kit check 4 passed / 0 failed.
+   No "probably". The one open item is Gate 1 (independent
+   review), which is a reviewer outage with a timed retry path,
+   not a deliverable gap.
+4. Submit path: coordinator submits via the fresh level-33 kit
+   CLI with the new commit SHA + all SEVEN recordings (the five
+   sealed v5 ones + the sealed round-7 01a1fcdf + the live
+   round-8 01a1fe25, sealed by the coordinator after this
+   session). Builder does not submit (STOP after the gate is
+   completed by the coordinator's Gate 1 re-run).
+5. Cost: time ~10 min to submit; capital $0.
+
+## MQ2 (round 8): Does this entry clear the competition's bar? — PASS
+
+- The round-8 entry is the standing round-7 entry (judge
+  992,057, 12W-0D-0L) with a targeted revision: the cover
+  pursuit now holds in-frame (escort flankers visible at the
+  front quarters — the r7 claim made true), the HUD density
+  pushes toward the top-5 checklist (weapon slots, REP number,
+  location + day/time, bigger radar blips + leader lines,
+  NEAR MISS popup), and the canonical judged set is restored
+  (map back in the third slot) — scorecard 2.45 held, zero
+  automatic failures. The bar analysis from the v5 gate stands,
+  strengthened. No grade is quoted as a promised outcome.
+- Bar numbers (fresh 20:52 WITA pull, field 9,267): top-5 judge
+  993,977 (all 12W-0L); #100 cutoff judge 992,057
+  (gentle-robin-35 "SOLMAR 3D"); our r7 judge 992,057 — AT the
+  cutoff value; our r6 judge 985,953. Rank figures differ by
+  view/tie handling (this pull: r7 rank 169; the coordinator's
+  20:30 watch: #2604/9,232) — the judge VALUE is the stable
+  comparator, and the 992,057 tie band is wide, so the rank
+  number is not quoted as the bar. The gap to the top-5 value
+  is ~1,920 judge points; round 8 chases the r6 level + the
+  live top-5 evidence, not r7's direction.
+
+## MQ3 (round 8): Is the submission window actually open for this account? — PASS
+
+- Quota via the fresh level-33 kit CLI (`status --competition
+  gta6-01 --json`, re-checked at gate time 21 Nov ~21:35 WITA,
+  identical to the 20:52 pull): **can_submit true**;
+  entries_made 7, entries_kept 4; day cap 5, taken 1, left 4
+  (resets 2026-11-22T00:00:00Z); hard limit max 40, left 33;
+  entries_left null (reputation-based, count withheld — the
+  site re-weighs from time to time; no account step raises it).
+  Deadline 2026-11-24T15:00:00Z is ~3 days ahead.
+- Read-only check only — NO submit was attempted by this session.
+
+## MQ4 (round 8): Is the entry signed by the right identity, through the right route? — PASS (unchanged)
+
+- Wallet 6do8 ONLY (.makefun/owner.json, untouched). The round-8
+  commit is pushed via the GitHub PAT route by this builder (this
+  session pushes — the task orders it, changed files only, then
+  verifies the tree); the coordinator seals + submits. No other
+  wallet, no other route. NEVER `git push` from the local repo
+  (its root commit a83983e holds only main.ts + gate-run.md).
+
+## MQ6 (round 8): Can you prove the entry works — beyond "it should work"? — PASS
+
+- Play-test on the FINAL code: 34/34, 0 errors (final-play-r8.log,
+  build dir). All gameplay checks pass on the final run (m1
+  $800+100 REP, m2 $1,200, rifle kill at 30 m, m3 $2,500 +
+  4×$50 bounties, REP+250, rank RUNNER, Sun Shell +$100,
+  waterline clamp, pause/map with 8 jobs, BUSTED 10% fine,
+  WASTED 10% bill); the Continue step restores cash/REP/
+  missions/position exactly. The chase/combat/map frames are
+  re-shot on the final code in the same run.
+- Determinism byte-identical (main.ts twice); dossier text
+  163,808 B ≤ cap; screenshots placed fresh (md5-verified) and
+  viewed full-size; scorecard 2.45, zero automatic failures;
+  kit check 4 passed / 0 failed; timer probe PASS (raceT 149.2,
+  "2:29").
+- No intermediate play-test failure this round (the final run
+  is the only full run; diag iterations are staging-only).
+
+## MQ7 (round 8): Is this entry on the never-submit list? — PASS (no match)
+
+- No code-drawn images (screenshots are real renders of the game).
+- main.ts unchanged this round, stdlib-only (readdirSync is node:fs).
+- Recording 01a1fe25-0535-72b2-a6ff-f90e04f7c1ec started 21 Nov
+  20:46:41 WITA — BEFORE this session's first build action (first
+  entry-dir write ~21:03 WITA); in-session revision present (the
+  6 code files + shots.json + screenshots + scorecard + this gate
+  record).
+- Wallet 6do8 only; repo via the PAT route (MQ4). No claim codes
+  anywhere (none issued for round 8; none in the repo/chat/
+  transcript). No secrets in the repo (grep clean at gate time:
+  no API keys, no private keys, no tokens; the only wallet address
+  in the tree is owner.json's 6do8, plus this gate record's
+  mention of it).
+- can_submit true, 4 left today (MQ3). Entry needs no capital ($0).
+- No grade quoted as a promised outcome (MQ2).
+- Not a duplicate (MQ5). Visual change present — the scorecard +
+  frames were re-verified this round (Gate 3, parent decides).
+
+## MQ8 (round 8): Session check — PASS (seventh session, covered)
+
+1. Round-8 session dd379dfb-0349-4341-a60c-a0fac118b73e /
+   recording 01a1fe25-0535-72b2-a6ff-f90e04f7c1ec — the 6-file
+   revision + screenshots + scorecard + this gate record. The
+   six earlier recordings (five sealed v5 + round-7 sealed
+   01a1fcdf-790a-7789-ac8d-802d0d43fa84) remain sealed and listed;
+   round 8 lists all SEVEN (coverage is the union).
+2. Recording start 2026-11-21T20:46:41 WITA — BEFORE this
+   session's first build action (first entry-dir write after
+   20:52 WITA).
+3. First action: reading the brief + live top-5 (MQ5, recorded
+   before any build writes).
+4. Coverage: recording LIVE through the whole revision (PID
+   24329, alive at gate time — ~47 min elapsed at the ~21:35
+   WITA check; healthy at build start: seq 77 / acked 3009 /
+   3,046 leaves). Seal is the coordinator's job after this
+   session completes cleanly. Standing note: the kit's record
+   log warns that 41 files predate the recording (the revision
+   necessarily builds on the v5 tree) — the recorded agent wrote
+   lines in every file it changed this round.
+5. In-session revision: the 6 code files + shots.json +
+   screenshots + scorecard + this gate record are all
+   in-session. thinking_revised is met.
+
+## Gate 0 (round 8): Reality — PASS
+
+- [x] Entry passes its play-test (34/34, 0 errors) on the final
+  code (MQ6).
+- [x] Every deliverable from /requirements is in the tree (MQ1).
+- [x] Evidence captured: play-test log (final-play-r8.log),
+  determinism diff (/tmp/r8-final1 vs /tmp/r8-final2),
+  dossier measurement (163,808 B), kit-check output (level-33,
+  --worktree), quota responses (quota-fresh-r8.json +
+  /tmp/r8-quota-final.json), Gate 1 raw logs
+  (build/gate1-review.log, gate1-review-gemini.log,
+  gate1-retry-out.txt), PIL metrics (scorecard-metrics.py run),
+  diag iterations (build/diag-chase-r8-v1..v3.jpg + .json),
+  timer probe (probe-timer.cjs).
+- [x] Repo push: this builder pushes via the PAT route (changed
+  files only) and records the new remote HEAD below; the
+  coordinator verifies it before submit.
+
+## Gate 1 (round 8): Quality — BLOCKED (reviewer outage; re-run after 2026-11-22 00:00 UTC)
+
+- [ ] Multi-model review NOT obtained — no independent review of
+  the round-8 diff (6 code files + shots.json, +209/-90 lines,
+  build/round8-diff.txt) exists yet:
+  - OpenRouter :free code/reasoning review, two models tried
+    (helper ~/workspace/custom-connectors/custom.openrouter/bin/
+    openrouter_api.py; GET /models re-checked first — 441
+    models, 11 :free; nvidia/nemotron-3-ultra-550b-a55b:free
+    still listed, same reviewer as r7): BOTH returned HTTP 429
+    "Rate limit exceeded: free-models-per-day" — X-RateLimit-
+    Limit 50, Remaining 0, reset 1795305600000 ms =
+    **2026-11-22 00:00:00 UTC**. Account-wide daily free quota
+    exhausted, not model-specific. No paid model was used — no
+    spend authorized. Raw 429s in build/gate1-review.log.
+  - Gemini text/copy review (gemini-3.8-flash, helper
+    ~/workspace/custom-connectors/custom.gemini/bin/
+    gemini_api.py; build/gate1-gemini.py sent the same review
+    prompt + full diff): attempt 1 read-timed-out after ~182 s;
+    attempt 2 (retry) HTTP 503 "This model is currently
+    experiencing high demand." Per the house rule the Gemini
+    503/timeout skip is NOT a Gate 1 FAIL — but Gemini is the
+    text/copy reviewer, not the code reviewer, so the CODE
+    review remains outstanding. Raw logs in
+    build/gate1-review-gemini.log + gate1-retry-out.txt.
+  - Xingchiapi was NOT used (forbidden by the task).
+  - The review exchange is recorded here (attempts, models,
+    errors) and as raw logs in the build dir; the verdict
+    itself does not exist yet and is NOT claimed.
+- [ ] RE-RUN (coordinator, after the 2026-11-22 00:00 UTC
+  reset): re-run the OpenRouter review of build/round8-diff.txt
+  (build/gate1-review.py — same prompt, model
+  nvidia/nemotron-3-ultra-550b-a55b:free, :free only), append
+  the verdict + any findings to this gate record, and — if
+  findings require fixes — fix them and re-run the WHOLE gate
+  from MQ1 before sealing. Do NOT seal on an unreviewed diff.
+- [x] Practice grade N/A (judged/visual competition) — the
+  evidence is the top-5 study + scorecard, stated as evidence,
+  never a promised outcome (MQ2).
+- [x] Feed-first study done for this revision (MQ5 round 8):
+  live top-5 analysis + principles, recorded before any build
+  writes.
+
+## Gate 2 (round 8): Dedup — PASS
+
+- [x] Not a duplicate of the standing entry (MQ5) — this is a
+  targeted revision of the standing round-7 entry under
+  Force_Last; the supersede is intended (round 8 replaces round
+  7's 01a1fda7).
+- [x] Rebuild-once rule respected: this is a revision, not a
+  rebuild — targeted edits only, no file re-typed (the diff is
+  +209/-90 lines across 6 code files + shots.json, with no
+  whole-file rewrites).
+- [x] Quota re-checked at gate time via the competition's own
+  endpoint (MQ3: can_submit true, 4 left today, 33 under hard
+  limit).
+
+## Gate 3 (round 8): Submission quality — PARENT DECIDES (Reza audit; visual change present)
+
+- [x] README matches the requirements template (unchanged).
+- [x] Entry message + signature use wallet 6do8 only; repo via PAT route (MQ4).
+- [x] Claim-code handling confirmed: no claim codes issued for
+  round 8; none in the repo, chat, or transcripts.
+- [x] No secrets in the repo (grep clean at gate time).
+- [x] Deadline still ahead at submit time (~3 days, MQ1/MQ3).
+- [ ] Reza visual audit — FRESH ROUND NEEDED: game/ and
+  screenshots/ CHANGED this round (cover re-stage, HUD density,
+  map frame restored). The parent decides whether Reza audits
+  the new frames before submit. The builder's evidence:
+  all four placed frames viewed full-size this round + scorecard
+  2.45 + 34/34 play-test.
+
+## Decision (Round 8)
+
+- **GATE NOT YET PASSED — Gate 1 outstanding (reviewer outage,
+  not an entry defect).** MQ1–MQ8 + Gates 0 and 2 PASS; Gate 1
+  BLOCKED; Gate 3 parent decides. The builder STOPs here: no
+  seal, no submit — the coordinator re-runs the OpenRouter
+  review after the 2026-11-22 00:00 UTC reset, appends the
+  verdict here, and completes the gate (fix + full re-gate from
+  MQ1 if the review raises findings), then seals + submits.
+- Remote HEAD after the PAT push: **(recorded below after the
+  push runs)** (RieryBuild/makefun-gta6-01-v5 @ main). Push via
+  the PAT Git Data/Contents API, changed files only
+  (build/push-gta6-01-v7.py): 6 game files + shots.json +
+  4 screenshots + scorecard.md + gate-run.md (last), plus the
+  deletion of screenshots/3-passed.jpg from the remote (its own
+  commit). Tree verification (build/verify-push-r8.py): remote
+  tree must EXACTLY match the local tree for all changed files.
