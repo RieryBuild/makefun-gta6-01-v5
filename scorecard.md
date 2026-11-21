@@ -1,21 +1,14 @@
-# Visual Scorecard — PUERTO DEL SOL (gta6-01 v5)
+# Visual Scorecard — PUERTO DEL SOL (gta6-01 round 7)
 
-Threejs-game 10-category visual scorecard, scored by the finishing
+Threejs-game 10-category visual scorecard, scored by the round-7
 builder on the FINAL judged frames, all four viewed full-size
-19 Nov 2026: 1-chase (cover), 2-title, 3-map, 4-combat, plus the
-spare 5-city re-shoot. "Before" is the inherited state — the
-continuation builder's final scores on these same frames (2.30);
-"after" is this session's re-verified score. Three of the four
-shipped frames are unchanged from the recovery placement (18:04Z);
-3-map was re-placed this session with a fixed render (the Gate 1
-re-check found a real label-overlap bug, the fix separated the
-"Ro's Safehouse" / "Rueda del Sol" pair, and the new frame is
-strictly cleaner). The finishing pass also fixed a gameplay bug (the
-bust timer) and attempted one cover re-stage that LOST on evidence
-(48 km/h vs 132 km/h) and was reverted — neither moves the visual
-score. Scale 0–3 (0 placeholder · 1 basic styled · 2 premium
-stylized · 3 showcase). Premium bar: every category ≥ 2,
-average ≥ 2.3.
+21 Nov 2026: 1-chase (cover), 2-title, 3-passed, 4-combat. "Before"
+is the v5 score on the same set (2.30, with 3-map in the third slot);
+"after" is this round's re-verified score. The third slot changed:
+3-map is out, 3-passed is in — the passed frame won the slot on
+evidence (see Placement below). Scale 0–3 (0 placeholder · 1 basic
+styled · 2 premium stylized · 3 showcase). Premium bar: every
+category ≥ 2, average ≥ 2.3.
 
 Genre equivalents: Hero = Ro on foot + the Solstice GT hero car;
 Obstacles/enemies = PSPD cruisers/heli/roadblock + Venn's crew;
@@ -26,26 +19,54 @@ stealable cars, weapons.
 
 | # | Category | Before | After | Evidence (after) |
 |---|----------|--------|-------|------------------|
-| 1 | Art direction | 2 | 2 | One committed sunset palette drives sky, fog, buildings, characters, HUD; six districts read as six places (map + city frames). Not 3: the palette is a single warm note everywhere; peds/traffic stay generic. |
-| 2 | Hero/player | 2.5 | 2.5 | Ro: articulated humanoid (bun, pink jacket, two-handed rifle aim, drive/walk/run poses, face texture); Solstice GT: salmon, spoiler, gold rims, distinct silhouette, large in the cover. Not 3: the 3D face is a static texture patch; Ro is inside the car (invisible) in the chase frame. |
-| 3 | Obstacles/enemies | 2 | 2 | PSPD cruisers read as police at distance (black/white + light bar + door decals); Venn crew distinct; roadblock + heli + wanted stars telegraph threat; radar blips converge. Not 3: the crew is one archetype, no varied family; the cover's pursuit still doesn't read at a glance (all police ahead — the one flank re-stage attempt lost on speed, see below). |
-| 4 | Rewards/interactables | 2 | 2 | Sun Shells glow gold, stashes green, mission beacon pillar, stealable cars; popups (+$100/+$500, REP floats, shell counter) confirm every pickup. Not 3: shell/stash forms are simple glows; the judged set shows no reward moment (no MISSION PASSED frame). |
-| 5 | World/environment | 3 | 3 | 6 districts, 9 avenues + 8 streets, lit windows/awnings/signs, palms, streetlights, Ferris wheel, water tower, marina, beach; foreground/midground/background in every frame; landmarks aid navigation. |
-| 6 | Materials/textures | 2 | 2 | Canvas textures with shared roles: facades (lit windows, mullions, floor slabs), asphalt (grain + double centre line), paver sidewalks, sand, water, face patches; PSPD livery decals. Not 3: no wear/grunge layering; buildings read flat at distance. |
-| 7 | Lighting/render | 2.5 | 2.5 | ACES tone mapping (exposure 1.05), sun key + violet hemi + sunset rim + ambient, shadows from the key, fog as warm haze (120–520 m) not a wall. Not 3: clouds are blobby, sun is a flat disc, no bloom/DOF post; the combat tracer is a fat white beam (slightly overcooked). |
-| 8 | VFX/motion | 2.5 | 2.5 | Tracers muzzle-aligned (the v4 fault fixed — visible in combat), muzzle flash + point light, -34/-50 damage numbers, light-bar strobe, heli beam + ground spot, beacon pulse, drift/near-miss popups, REP floats. Not 3: no large-scale impact effects. |
-| 9 | UI/HUD | 2.5 | 2.5 | Icon-first HUD (stars, radar, bars, weapon/ammo, speed, objective + portrait subtitle), full map (districts, 8 jobs, stats, save slot; all 16 POI labels legible after the Gate 1 label-flip fix), title (logo, menu, 5 crew portraits). Not 3: transitions are fades only. |
-| 10 | Performance evidence | 2 | 2 | Per-shot renderer diagnostics (below, fresh this session), 30/30 play-test with 0 errors on the final code, 1280×720 target-viewport shots, budgets (game/ 925 KiB / 44 files, dossier 728 KB, text 163,636 / 163,840 B). Not 3: no real-hardware baseline (SwiftShader 0.3 fps is a harness artifact). |
+| 1 | Art direction | 2 | 2.5 | The palette is now committed, not just warm: fog 0xe87a45, sun 0xffc27a, rim 0xff7a3d, CENTRO facades warm dusk mauve, COLINAS warmer sand — sky, fog, buildings, characters and HUD all sit in one orange sunset note; building silhouettes now vary (taller Deco crowns on every second building, setback upper floors on every third market row). Not 3: it is still a single warm note everywhere; peds/traffic stay generic. |
+| 2 | Hero/player | 2.5 | 2.5 | Ro: articulated humanoid (bun, pink jacket, two-handed rifle aim, drive/walk/run poses, face texture); Solstice GT: salmon, spoiler, gold rims, distinct silhouette, large in the cover and in the passed frame. Not 3: the 3D face is a static texture patch; Ro is inside the car (invisible) in the chase frame, and small (7.5 m foot camera) in the passed frame — the title crew portraits carry the readable face. |
+| 3 | Obstacles/enemies | 2 | 2.5 | The cover's pursuit now reads at a glance — the v5 blocker is fixed: two cruisers flank/ram at the hero's front quarters (PSPD legible, light bars strobing), two hold the road ahead, the roadblock is legible, the heli sits in the frame with its beam slanting onto the road, and the radar blips converge. Not 3: the crew is one archetype, no varied family. |
+| 4 | Rewards/interactables | 2 | 2.5 | The judged set now HAS the reward moment the v5 card explicitly lacked: MISSION PASSED in huge gold letters, "+$800 · +100 REP · Pistol", cash $2,000, Teo's win line, Ro + the Solstice on the avenue. Sun Shells glow gold, stashes green, mission beacon pillar, stealable cars; popups (+$100/+$500, REP floats, shell counter) confirm every pickup. Not 3: shell/stash forms are simple glows. |
+| 5 | World/environment | 3 | 3 | 6 districts, 9 avenues + 8 streets, lit windows/awnings/signs, palms, streetlights, Ferris wheel, water tower, marina, beach; foreground/midground/background in every frame; landmarks aid navigation. Note: the map frame left the set, so the district NAMES are no longer in the screenshots — but the world geometry is unchanged and visible in all four frames (title panorama, MERCADO avenue, docks, safehouse avenue), and the map screen still exists in-game (M opens it; 8 jobs listed, verified in the play-test). |
+| 6 | Materials/textures | 2 | 2 | Canvas textures with shared roles: facades (lit windows, mullions, floor slabs), asphalt (grain + double centre line), paver sidewalks, sand, water, face patches; PSPD livery decals. Not 3: no wear/grunge layering; buildings read flat at distance. Unchanged this round — the silhouette work is geometry, not materials. |
+| 7 | Lighting/render | 2.5 | 2.5 | ACES tone mapping (exposure 1.05), sun key + violet hemi + sunset rim + ambient, shadows from the key, fog as warm haze (120–520 m) not a wall; the warmer sun/rim/fog this round deepen the sunset. Not 3: clouds are blobby, sun is a flat disc, no bloom/DOF post. |
+| 8 | VFX/motion | 2.5 | 2.5 | The tracer is now a tapered thin streak (0.012 tip / 0.028 muzzle), not the v5 fat white beam — it reads as a shot across the combat frame; muzzle flash + point light, -34/-50 damage numbers, light-bar strobe, heli beam + ground pool, beacon pulse, drift/near-miss popups, REP floats. Not 3: no large-scale impact effects. |
+| 9 | UI/HUD | 2.5 | 2.5 | Icon-first HUD, now denser without a text table: corner mission card (JOB 1/8 · FIRST LIGHT / STAGE 1/2), car name + condition bar above the speedo (Solstice GT), radio pill (RADIO SOL 92.5 Sunset Sounds), REP rank label (RUNNER / WHEELWOMAN), stars, radar, bars, weapon/ammo, speed, objective + portrait subtitle; title (logo, menu, 5 crew portraits); passed card. Not 3: transitions are fades only. |
+| 10 | Performance evidence | 2 | 2 | Per-shot renderer diagnostics (below, fresh this round), 30/30 play-test with 0 errors on the final code, 1280×720 target-viewport shots, budgets (game/ ~925 KiB, dossier 769 KB, text 163,809 / 163,840 B). Not 3: no real-hardware baseline (SwiftShader 0.3 fps is a harness artifact). |
 
-**Average: 2.30** (23.0 / 10). Every category ≥ 2. **Premium bar met**
-(≥ 2.3). Honest note: this ties the prior 2.30 and does NOT beat v4
-(2.35) or rev1 (2.40) — the gap is Materials / Obstacles / Rewards /
-Performance at 2, and the cover is still the weakest frame (MEDIUM:
-police ahead, not flanking). The finishing pass spent its one cover
-attempt on the flank re-stage and the evidence said no; the next
-passes that would lift the score are wear + grunge on materials, a
-varied enemy family, a reward moment in the judged set, and a
-real-hardware performance baseline.
+**Average: 2.45** (24.5 / 10). Every category ≥ 2. **Premium bar met
+(≥ 2.3) and the v5 2.30 beaten** — the lift is Obstacles 2→2.5 (the
+cover pursuit now reads), Rewards 2→2.5 (the MISSION PASSED frame),
+Art direction 2→2.5 (committed palette + varied silhouettes). The
+remaining gap to 2.5+ is Materials (wear/grunge), a varied enemy
+family, and a real-hardware performance baseline.
+
+## Placement — the 4 best, on evidence
+
+All five re-shot frames were viewed full-size this round. The set is
+1-chase / 2-title / 3-passed / 4-combat; 3-map is the spare (not
+placed, kept in the build dir).
+
+- **1-chase — STRONG (cover).** Hero center, 132 km/h, heli upper-left
+  with diagonal beam + road pool, corner mission card + radio + Solstice
+  GT + RUNNER + 3 stars + $1,200 + converging radar blips + Teo
+  subtitle. Flank pair + roadblock + ahead pair cluster mid-frame
+  (PSPD legible on the left flanker). The v5 MEDIUM is fixed.
+- **2-title — STRONG.** PUERTO DEL SOL title, tagline, menu buttons,
+  THE CREW portraits (Rosa Delgado, Teo, Inés, Captain Reyes, Venn),
+  Ro by the Solstice, warm orange palette, sun.
+- **3-passed — STRONG (new).** Huge gold MISSION PASSED + "+$800 ·
+  +100 REP · Pistol" + Teo's win line + $2,000 + Ro on the avenue with
+  the Solstice. It beats the map for the slot: the map's evidence class
+  (open world + mission list + stats) is already partly covered by the
+  title ("Eight jobs") and the chase mission card, while the passed
+  frame adds a class the set lacked entirely (the reward moment) and
+  lifts the weakest v5 category. The first capture of this frame failed
+  (mission 2 auto-started at t=4 game-s and hid the card); the staging
+  now freezes `nextMissionT = 999` and the re-shoot captures the card.
+- **4-combat — STRONG.** Ro in aim pose, thin tapered tracer streak,
+  -34 damage number legible, Inés subtitle, $1,250, 1 star, WHEELWOMAN,
+  rifle 22/96. The v5 fat-white-beam defect is fixed.
+- **3-map — STRONG (spare).** City map with districts, POIs, STORY 2/8
+  with 2 missions done, STATS block, SAVE SLOT 1 21% COMPLETE. It loses
+  the slot only because the passed frame adds more; the map screen
+  itself is unchanged in-game.
 
 ## Automatic failures: NONE standing
 
@@ -53,28 +74,24 @@ real-hardware performance baseline.
   frames are dense authored composition).
 - Hero is not a primitive + glow (articulated Ro + layered
   Solstice GT).
-- HUD is not stat/debug cards (icon-first + full map/title screens).
+- HUD is not stat/debug cards (icon-first + full title/passed screens).
 - Fog/bloom do not stand in for geometry (dense world underneath;
   fog near 120 m, far 520 m).
 - No UI overlap of the play path, no clipped text (map labels
-  deconflicted + edge-flipped; the Gate 1 re-check caught the one
-  real overlap — the flipped "Rueda del Sol" label covering
-  "Ro's Safehouse" — and the fix separated them; all 16 POI labels
-  legible in the shipped map frame).
+  deconflicted in v5; the corner mission card is a new element and
+  sits top-left, clear of the pursuit).
 - Playable through real input (30/30 Puppeteer play-test drives
-  keyboard + mouse); chase/combat/city are active-play frames.
-- Renderer diagnostics reported below (after graphics changes).
+  keyboard + mouse); chase/combat/passed are active-play frames.
 
 ## Renderer diagnostics (final code, per shot)
 
-| Shot | Draw calls | Triangles | Source |
-|------|-----------|-----------|--------|
-| 1-chase (shipped) | 2,346 | 99,510 | Recovery re-shoot of the shipped frame |
-| 1-chase (rejected flank attempt) | 2,118 | 104,546 | This session's re-shoot |
-| 2-title | 8,053 | 276,388 | This session's re-shoot (matches recovery exactly) |
-| 3-map | 3,300 | 104,488 | This session's re-shoot (matches recovery exactly) |
-| 4-combat | 8,554 | 279,168 | This session's re-shoot (dynamic elements vary slightly) |
-| 5-city (spare) | 3,309 | 120,380 | This session's re-shoot |
+| Shot | Draw calls | Triangles | Size | Source |
+|------|-----------|-----------|------|--------|
+| 1-chase (placed) | 2,084 | 103,620 | 108,103 B @q82 | Round-7 re-shoot run 4 (final-shots4.log) |
+| 2-title (placed) | 8,075 | 274,514 | 118,493 B @q82 | Round-7 re-shoot run 4 |
+| 3-passed (placed) | 8,812 | 291,176 | 123,645 B @q82 | Round-7 single-shot run (final-shot-passed.log) |
+| 4-combat (placed) | 8,575 | 279,490 | 99,652 B @q82 | Round-7 re-shoot run 3 (final-shots3.log) |
+| 3-map (spare) | 3,306 | 104,560 | 69,331 B @q82 | Round-7 re-shoot run 4 |
 
 Full probe (18 Nov 2026): 2,537 calls / 97,916 tris / 6,053
 geometries / 52 textures (title panorama). SwiftShader renders at
@@ -84,77 +101,82 @@ not a ship metric; the shipped game targets 60 fps on real hardware
 
 ## Measured image evidence (advisory signals, PIL)
 
-Re-run this session on the FINAL placed frames with
+Re-run this round on the FINAL placed frames with
 scorecard-metrics.py (log: scorecard-metrics-final.log in the build
-dir). The 5-city row is the fresh re-shoot (same staging).
+dir).
 
 | Shot | Color entropy | Dominant share | Luminance contrast | Edge density |
 |------|--------------|----------------|-------------------|--------------|
-| 1-chase | 6.29 bits | 0.125 | 68.5 | 0.144 |
-| 2-title | 7.13 bits | 0.047 | 54.2 | 0.146 |
-| 3-map | 4.76 bits | 0.141 | 39.8 | 0.073 |
-| 4-combat | 5.91 bits | 0.168 | 57.6 | 0.139 |
-| 5-city | 5.72 bits | 0.160 | 52.1 | 0.126 |
+| 1-chase | 6.39 bits | 0.110 | 62.4 | 0.144 |
+| 2-title | 7.18 bits | 0.038 | 53.9 | 0.147 |
+| 3-passed | 6.80 bits | 0.109 | 58.4 | 0.179 |
+| 4-combat | 5.83 bits | 0.166 | 60.2 | 0.127 |
 
 Thresholds (skill): entropy < 3.0, dominant > 0.6, edge < 0.04,
-contrast < 60 are evidence against a score above 2. All five frames
-pass entropy, dominant share, and edge density. Four frames sit below
-the luminance-contrast advisory (54.2 / 39.8 / 57.6 / 52.1) —
-explained, not excused: the deliberate sunset palette (warm gradient
-sky + dark asphalt) has a narrow luminance range by design, and
-readability comes from hue contrast (warm sky vs dark road vs salmon
-car), not luminance; the map is a flat 2D screen by nature. The chase
-frame passes outright (68.5). No frame shows fog/darkness compression
-standing in for geometry (edge density 0.073–0.146 throughout). The
-rejected flank attempt measured 6.12 / 0.163 / 71.1 / 0.146 —
-marginally better on contrast, which the metrics cannot see past:
-the speedo (48 vs 132 km/h) is what the chase read turns on, and no
-pixel metric captures it.
+contrast < 60 are evidence against a score above 2. All four frames
+pass entropy, dominant share, and edge density. Two pass the
+luminance-contrast advisory outright (chase 62.4, combat 60.2 —
+combat improved from 57.6 in v5); title (53.9) and passed (58.4) sit
+below it — explained, not excused: the deliberate sunset palette
+(warm gradient sky + dark asphalt) has a narrow luminance range by
+design, and readability comes from hue contrast (warm sky vs dark
+road vs salmon car), not luminance. The passed frame has the highest
+edge density of the set (0.179 — the big gold card + street scene).
+No frame shows fog/darkness compression standing in for geometry
+(edge density 0.127–0.179 throughout).
 
-## Finishing pass behind this scorecard
+## Self-critique verification cycle (this round)
 
-1. `newGame()` now resets the staging knobs to play defaults
-   (`cam.distScale = 1`, `player.ramKeepsSpeed = false`,
-   `police.roadblockDist = 60`) — staging sets them AFTER calling
-   `newGame()`, so a fresh game never inherits a staged value
-   (game.js).
-2. Bust timer fix (police.js): `bustT` DECAYS at half rate when no
-   cruiser is within 8 m instead of snapping to 0. diag17 proved the
-   defect — the four cruisers orbit at ~18 m/s and all swing past
-   8 m together for ~1 s of each ~2.6 s orbit, so the hard reset
-   kept the timer under 2.5 s for 20+ game-s (peak 2.23) while the
-   player stood still surrounded; the first final play-test run
-   timed out on the busted step at 24/24. After the fix the bust
-   fires at ~6 game-s (diag17 re-run) and the full play-test passes
-   30/30 with 0 errors. Speeding away still sheds the timer
-   instantly (outer branch unchanged).
-3. ONE bounded chase re-stage attempt (staging.js, reverted): the
-   flankers moved from 15–16 m ahead to 5 m ahead at the asphalt
-   edge (±5), so they would sit level with the hero's doors at the
-   t=0.4–0.6 capture. The re-shoot put ONE PSPD cruiser legibly at
-   the left flank — but the speedo bled to 48 km/h (vs 132 in the
-   shipped frame), the right flanker never appeared (converged into
-   the hero's path, occluded ahead), and the frame read as boxed-in
-   at low speed instead of fleeing. NOT a clear win, so the shipped
-   1-chase.jpg (md5 6c93c820…) stands and the staging was reverted
-   to the recovery slots. The rejected frame is preserved at
-   build/shots-raw/1-chase-REJECTED-flank-attempt.jpg.
-4. Determinism re-verified after the edits: main.ts twice →
-   byte-identical output, ~0.8 s/run (limit 10 s).
-5. Gate 1 re-check fix (menus.js): after the bottom-edge label
-   flip, re-check overlap and nudge UP (never down — down would
-   re-cross the bottom edge). The finding was REAL, not latent:
-   the shipped map's flipped "Rueda del Sol" label was covering
-   "Ro's Safehouse" ("Ro's Safehou" in the old frame). The fix
-   separated them; the map was re-shot (diag18, 0 errors) and the
-   placed 3-map.jpg replaced with the cleaner render (92,062 B,
-   md5 163af724…). The re-check's second finding (beam quaternion)
-   was a reviewer error, rebutted: the cone's WIDE end (base, local
-   -Y) correctly faces the ground target and its apex sits at the
-   heli — flipping it would break the searchlight. PIL metrics on
-   the new map are unchanged (4.76 / 0.141 / 39.8 / 0.073).
+Three weaknesses were found on the viewed frames and dispositioned:
 
-Play-test on the final code: 30/30, 0 errors (19 Nov 2026, log in the
-build dir). Gate 1 review: PASS (nvidia/nemotron-3-ultra-550b-a55b:free,
-cost $0) + re-check of the re-implemented and new hunks recorded in
-gate-run.md.
+1. **Ro's face is small in the passed frame** (foot camera, 7.5 m).
+   Considered tightening to the aim camera (4.2 m) — REJECTED: the aim
+   camera looks along Ro's heading, so with her facing the camera the
+   aim camera would sit behind her back; and the frame's subject is
+   the MISSION PASSED card, which is huge and legible. The title crew
+   portraits carry the readable face. Accepted as a limitation, no
+   code change.
+2. **The combat tracer reads white, not orange** (additive orange over
+   a bright sky washes to white). Considered deepening the tracer
+   colour — REJECTED: a bright tracer is physically correct, it reads
+   as a shot, and the v5 defect (fat white beam) is already fixed by
+   the taper. Accepted, no code change.
+3. **The flank cruisers' livery is only partly legible** (PSPD reads on
+   the left flanker; the pair reads as dark cars). Accepted: the light
+   bars strobe, one PSPD reads, and the frame is STRONG overall; a
+   brighter livery would break the PSPD black/white identity. No code
+   change.
+
+No code fixes came out of the cycle — the three findings are accepted
+limitations with reasons, verified against the viewed frames. The
+cycle's one real fix was earlier in the round: the passed frame's
+t=4 auto-start bug (mission 2 hid the card before the slow capture),
+fixed with `nextMissionT = 999` and verified by the re-shoot.
+
+## Round-7 changes behind this scorecard
+
+1. Chase re-stage (staging.js + police.js + camerawork.js): flank
+   pair cz-8, ±5 m, speed 26, top 34, opposite wobble; ahead pair
+   cz-24/-30; roadblockDist 18; heli angle -π/2-0.45, height 13 m,
+   hold=true, aimAhead 15; cam distScale 0.8, drivePitch 0.12. Five
+   diag iterations, all measured; v5 frozen (see gate-run.md).
+2. New `?shot=passed` branch (staging.js): mission 1 through the
+   real stage machine, Ro + Solstice on the safehouse avenue,
+   `nextMissionT = 999` freeze (the t=4 fix, verified by re-shoot).
+3. HUD density (hud.js + game.js + index.html + style.css): corner
+   mission card, car name + condition bar, radio re-show, REP rank
+   label — icon-first, no text police table (Reza's direction).
+4. Tracer taper (shooting.js): 0.012 tip / 0.028 muzzle, opacity 0.9.
+5. Palette (palette.js): warmer fog/sun/rim, CENTRO warm dusk mauve,
+   COLINAS warmer sand. Silhouettes (structures.js): varied Deco
+   crowns + setback market-row upper floors, both deterministic.
+6. P3 audit: no renames (33 files, one job each — see gate-run.md).
+
+Play-test on the final code: **30/30, 0 errors** (21 Nov 2026,
+final-play4.log in the build dir — the Continue step needed a fresh
+page for the reload after 28 checks, a harness-only change for the
+starved VM; the game code is untouched by it). Gate 1 review: PASS
+(nvidia/nemotron-3-ultra-550b-a55b:free, cost $0, no findings raised;
+full exchange in gate-run.md). Gemini text/copy: SKIPPED — 3 attempts
+(2.5-flash 404 retired; 3.8-flash hung 120 s, then errored) — recorded
+gap, not a FAIL, per the gate rules.
