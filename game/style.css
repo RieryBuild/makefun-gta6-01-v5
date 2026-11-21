@@ -30,12 +30,23 @@ body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff;
 
 #hud-top-right { position: absolute; top: 16px; right: 20px; text-align: right; }
 #hud-money {
-  font-family: 'Passion One', sans-serif; font-size: 34px; letter-spacing: 1px;
+  font-family: 'Passion One', sans-serif; font-size: 42px; letter-spacing: 1px;
   color: #7dd87d; text-shadow: 0 2px 6px rgba(0,0,0,0.7);
 }
-#hud-stars { font-size: 26px; letter-spacing: 4px; line-height: 1.2; }
+#hud-stars { font-size: 32px; letter-spacing: 4px; line-height: 1.2; }
 #hud-stars .star.on { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.7); }
 #hud-stars .star.off { color: rgba(255,255,255,0.25); }
+
+#hud-timer {
+  font-family: 'Passion One', sans-serif; font-size: 28px; letter-spacing: 1px;
+  color: #ffd700; text-shadow: 0 2px 6px rgba(0,0,0,0.8); margin-top: 2px;
+}
+#hud-location {
+  font-size: 15px; letter-spacing: 2px; color: #ffd27a; margin-bottom: 6px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8); text-transform: uppercase;
+}
+#hud-location .loc-time { color: rgba(255,255,255,0.85); }
+#weapon-slots { display: block; margin: 0 0 6px auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
 
 #hud-bottom-left { position: absolute; left: 18px; bottom: 18px; }
 #radar { display: block; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.5); }
@@ -46,7 +57,7 @@ body { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #fff;
 .bar .fill.health.low { background: #ff4444; }
 .bar .fill.armor { background: #4a90d9; }
 .bar .fill.rep { background: #f5c518; }
-#hud-replabel { margin-top: 3px; font-size: 12px; letter-spacing: 2px; color: #f5c518; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+#hud-replabel { margin-top: 3px; font-size: 14px; letter-spacing: 2px; color: #f5c518; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 
 #hud-bottom-right { position: absolute; right: 20px; bottom: 18px; text-align: right; }
 #hud-speed { font-family: 'Passion One', sans-serif; font-size: 30px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
