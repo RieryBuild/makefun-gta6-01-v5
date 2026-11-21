@@ -9,6 +9,7 @@
 
 import { CAST } from './cast.js';
 import { SHELL_SPOTS } from './growth.js';
+import { MISSIONS } from './story.js';
 
 export function stageShot(game, name, seed = 1) {
   const world = game.world;
@@ -18,17 +19,24 @@ export function stageShot(game, name, seed = 1) {
   // after the 5 s / 4.5 s transient timers fire. Remember the shot's
   // HUD lines and re-show them when the shot is ready, with a long
   // duration, so the captured frame still carries the objective and
-  // the subtitle.
+  // the subtitle. mc = corner mission card, radio = station pill,
+  // big = MISSION PASSED card — all optional per shot.
   let shotHud = null;
-  const stageHud = (obj, sub) => {
-    shotHud = { obj, sub };
+  const stageHud = (obj, sub, mc, radio, big) => {
+    shotHud = { obj, sub, mc, radio, big };
     if (obj) hud.showObjective(obj.text, obj.color);
     if (sub) hud.showSubtitle(sub.speaker, sub.text);
+    if (mc) hud.showMissionCard(mc.title, mc.sub, 120000, 'corner');
+    if (radio) hud.showRadio(radio.station, radio.track, 120000);
+    if (big) hud.showBigCard(big, 120000);
   };
   const ready = () => {
     setTimeout(() => {
       if (shotHud?.obj) hud.showObjective(shotHud.obj.text, shotHud.obj.color, 120000);
       if (shotHud?.sub) hud.showSubtitle(shotHud.sub.speaker, shotHud.sub.text, 120000);
+      if (shotHud?.mc) hud.showMissionCard(shotHud.mc.title, shotHud.mc.sub, 120000, 'corner');
+      if (shotHud?.radio) hud.showRadio(shotHud.radio.station, shotHud.radio.track, 120000);
+      if (shotHud?.big) hud.showBigCard(shotHud.big, 120000);
       window.__shotReady = true;
     }, 1400);
   };
@@ -98,17 +106,36 @@ export function stageShot(game, name, seed = 1) {
     player.ramKeepsSpeed = true; // rams shove + damage, never bleed
     // speed for the shot — four cruisers at once would halve it.
     world.police.setWanted(3); // spawns 4 cruisers + heli + roadblock
-    // Cruisers IN the frame, not behind the camera: two flanking just
-    // ahead of the hero car (left/right, closing to ram), two further
-    // up the avenue. They need LEAD: the hero accelerates at 26 m/s^2
-    // while cruisers top out near 19.8, so flankers staged 9 m ahead
-    // were rear-ended by t=0.5 and the car piled up to 15 km/h. At
-    // 15–16 m with a wide lateral offset they close to a visible ram
-    // inside the capture window without touching the car first.
+    // Cruisers AROUND the hero car, not all ahead of it: the v5 frame
+    // read as speeding toward traffic because every cruiser sat in
+    // front. Two now flank the hero's quarters and two hold the road
+    // ahead. The first rear-quarter attempt (staged 1 m BEHIND the
+    // hero) failed in the diag: a cruiser behind the hero shows the
+    // camera its 4.4 m FLANK, which reads far bigger than the hero's
+    // 2 m rear — the two flanks filled the bottom corners and buried
+    // the hero. Cruisers staged AHEAD show the camera their rears,
+    // the same profile as the hero, so the hero stays the biggest car
+    // in the frame. The second attempt (4 m ahead) failed the other
+    // way: the pursuit caps cruisers at 19.8 m/s, the hero (26 m/s^2)
+    // caught them by t=0.47, and carVsTraffic's 0.75x-per-frame
+    // overlap penalty collapsed the speedo to 80. At 8 m the same
+    // thing happened by t=0.72 (86 km/h, nose-to-tail). So the flank
+    // pair gets a top-speed override (c.top = 34, police.js): they
+    // hold ~31 m/s, the hero closes only ~4 m by t=1.0, and the pair
+    // stays ~4–9 m ahead, flanking the hero's front quarters — a
+    // mid-ram at the quarter panel, always past the 3.2 m collision
+    // radius, so the car is never actually touched and the speedo
+    // stays high. The capture window itself is load-dependent
+    // (t=0.4–1.0), which is why the margin is sized for t=1.0.
+    // The pair also stages WIDE (±5 m) with OPPOSITE wobble phases:
+    // the intercept steering pulls both toward the hero's line, and
+    // with the same phase they stacked into a single dark mass dead
+    // ahead (diag v4). Opposite phases keep them staggered — one
+    // left-forward, one right-back — so two cruisers read, not one.
     const slots = [
-      { x: cx - 6, z: cz - 15, speed: 24 },
-      { x: cx + 6, z: cz - 16, speed: 24 },
-      { x: cx - 3, z: cz - 26, speed: 22 },
+      { x: cx - 5, z: cz - 8, speed: 26, top: 34, wobble: 0 },
+      { x: cx + 5, z: cz - 8, speed: 26, top: 34, wobble: Math.PI },
+      { x: cx - 3, z: cz - 24, speed: 22 },
       { x: cx + 3.5, z: cz - 30, speed: 22 },
     ];
     world.police.cruisers.forEach((c, i) => {
@@ -117,23 +144,30 @@ export function stageShot(game, name, seed = 1) {
       c.mesh.rotation.y = Math.PI;
       c.heading = Math.PI;
       c.speed = s.speed;
+      if (s.top) c.top = s.top; // staging-only pursuit override
+      if (s.wobble !== undefined) c.wobble = s.wobble; // stagger the pair
     });
-    // Heli ahead of the player and LOW (24 m, not 42): at full height
-    // the heli and its beam sat above the frame's top edge. Down here
-    // the beam slants visibly onto the road and the heli body can peek
-    // into the top of the frame. The beam aims 15 m AHEAD of the car,
-    // not at it — a beam aimed at the player points straight down the
-    // chase camera's lens and floods the frame as a white wedge.
+    // Heli ahead-left of the player and LOW (13 m, not 24): at 24 m
+    // the heli sat ~39° above the chase camera's horizon while the
+    // frame top was ~+18°, so it never appeared. At 13 m with the
+    // flatter drive pitch below it sits ~21° up — inside the frame —
+    // and the beam slants diagonally onto the road ahead. The orbit is
+    // HELD at the staged angle (hold: true) so the heli cannot drift
+    // out of frame before the capture. The beam aims 15 m AHEAD of
+    // the car, not at it — a beam aimed at the player points straight
+    // down the chase camera's lens and floods the frame as a white
+    // wedge.
     if (world.police.heli) {
-      world.police.heli.angle = -Math.PI / 2;
-      world.police.heli.height = 24;
+      world.police.heli.angle = -Math.PI / 2 - 0.45;
+      world.police.heli.height = 13;
       world.police.heli.aimAhead = 15;
+      world.police.heli.hold = true;
     }
-    // Roadblock close enough to read: 22 m ahead, just in front of the
+    // Roadblock close enough to read: 18 m ahead, just in front of the
     // nearest traffic car, angled cruisers + flashing light bars
-    // across the avenue. At 26 m it still dissolved into the traffic
-    // cluster ahead; at 22 m the sideways profiles read.
-    world.police.roadblockDist = 22;
+    // across the avenue. At 22 m it still dissolved into the traffic
+    // cluster ahead; at 18 m the sideways profiles read.
+    world.police.roadblockDist = 18;
     // Traffic ahead of the player, not around the camera — and far
     // enough ahead that the hero doesn't rear-end it inside the
     // capture window: centred 44 m ahead, the four cars fill the road
@@ -170,14 +204,21 @@ export function stageShot(game, name, seed = 1) {
       world.crowd.place(ped);
     });
     world.crowd.raiseAlarm(cx, cz - 15);
-    // Closer chase cam: the hero car fills the lower frame instead of
-    // sitting small and distant at the end of a 9 m boom.
+    // Closer, flatter chase cam: the hero car fills the lower frame
+    // instead of sitting small and distant at the end of a 9 m boom,
+    // and the flatter pitch (0.12, not 0.22) lifts the frame top to
+    // ~+27° so the low heli sits inside it.
     game.cam.mode = 'drive';
-    game.cam.distScale = 0.62;
+    game.cam.distScale = 0.8;
+    game.cam.drivePitch = 0.12;
     game.cam.yaw = 0; // == heading + PI: converged from frame one
+    // No separate objective line in this frame — the corner mission
+    // card carries the brief, so the top-left stays a single element.
     stageHud(
-      { text: 'Get to the garage — and lose the heat', color: '#ffd700' },
+      null,
       { speaker: 'teo', text: CAST.teo.lines.chase },
+      { title: 'JOB 1/8 · FIRST LIGHT', sub: 'STAGE 1/2 · Get to the garage — lose the heat' },
+      { station: game.sound.station, track: game.sound.station.show },
     );
     ready();
     return;
@@ -262,6 +303,55 @@ export function stageShot(game, name, seed = 1) {
       { text: 'Clear the docks crew', color: '#ff6a3d' },
       { speaker: 'ines', text: CAST.ines.lines.combat },
     );
+    ready();
+    return;
+  }
+
+  if (name === 'passed') {
+    // The reward frame: mission 1 completes through the REAL stage
+    // machine (completeStage twice), so the MISSION PASSED card, the
+    // +$800 / +100 REP payout, the Pistol unlock and the autosave are
+    // all genuine — no screenshot-only card. Ro stands on foot on the
+    // avenue by the safehouse with the Solstice parked beside her,
+    // the camera low in front of her face.
+    game.story.completeStage();
+    game.story.completeStage();
+    hud.hideMissionCard();
+    // Freeze the passed state: without this, mission 2 auto-starts at
+    // t=4 game-s — hideBigCard() runs and onMissionStart replaces the
+    // subtitle — and a slow screenshot (SwiftShader, ~60 s wall) lands
+    // after it, capturing an empty frame. Same pattern as the map shot.
+    game.nextMissionT = 999;
+    player.health = 100;
+    player.armor = 60;
+    const px = -40, pz = 152;
+    player.mesh.position.set(px, 0, pz);
+    player.mesh.rotation.y = 0; // facing +z (south, toward the camera)
+    player.heading = 0;
+    // The Solstice she just drove home, parked on the avenue beside her.
+    const hc = game.player.heroCar;
+    hc.mesh.position.set(-36, 0, 148);
+    hc.mesh.rotation.y = Math.PI; // heading -z (up the avenue)
+    hc.heading = Math.PI;
+    // Street life around the safehouse: a few cars + peds on the
+    // avenue's sidewalks (they flee once the mission completes).
+    world.traffic.ensureNear(-40, 140, 3);
+    const pped0 = world.crowd.peds.length;
+    world.crowd.spawn(4, { x: -40, z: 150 });
+    world.crowd.peds.slice(pped0).forEach((ped, i) => {
+      ped.line = { axis: 'z', at: -40 + (i % 2 === 0 ? -7 : 7) };
+      ped.pos = 146 + i * 5;
+      ped.mode = 'walk';
+      world.crowd.place(ped);
+    });
+    game.cam.mode = 'foot';
+    game.cam.yaw = 0; // camera south of Ro, looking north at her face
+    game.cam.pitch = 0.18;
+    // Re-show the REAL passed card (same text the hook showed) for
+    // the capture, plus Teo's win line.
+    const m = MISSIONS[0];
+    stageHud(null, { speaker: 'teo', text: CAST.teo.lines.win }, null, null,
+      `<div class="big-title gold">MISSION PASSED</div><div class="big-sub">+$${m.cash.toLocaleString()} · +${m.rep} REP · ${m.unlock}</div>`);
     ready();
     return;
   }
