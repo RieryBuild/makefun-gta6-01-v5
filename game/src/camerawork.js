@@ -21,6 +21,10 @@ export class Camerawork {
     // chase/aim cameras closer (hero car / Ro larger in frame) without
     // changing the shipped camera feel (scale stays 1 in live play).
     this.distScale = 1;
+    // drivePitch is the same kind of staging-only knob: the chase shot
+    // flattens the drive pitch so the heli sits inside the frame.
+    // Reset to 0.22 in newGame() / continueGame() with distScale.
+    this.drivePitch = 0.22;
     this.fov = 62;
     this.shake = 0;
     this.cineT = 0;
@@ -68,7 +72,7 @@ export class Camerawork {
       this.yaw = yaw;
       const speedK = clamp(focus.speed / 55, 0, 1);
       wantDist = (8.2 + speedK * 2.2) * this.distScale;
-      wantPitch = 0.22;
+      wantPitch = this.drivePitch;
       wantFov = 62 + speedK * 10;
       target = { x: pos.x, y: pos.y + 1.4, z: pos.z };
     } else if (this.mode === 'aim') {
