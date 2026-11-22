@@ -1,10 +1,9 @@
-// Vehicles — multi-part models with distinct silhouettes per class.
+// Vehicles — multi-part models, distinct silhouettes per class.
 // A car is: lower body + hood + cabin with glass + trunk + 4 wheels
-// (cylinder + hub disc) + headlights + taillights + bumpers. The hero
-// car (SOLSTICE GT) is low and wide with a spoiler and gold rims; the
-// PSPD cruiser reads as police at 200 m (black/white + light bar +
-// door decals); the van and the truck are their own shapes. Never a
-// single rounded box with a windshield stripe.
+// + headlights + taillights + bumpers. The hero car (SOLSTICE GT) is
+// low and wide with a spoiler and gold rims; the PSPD cruiser reads as
+// police at 200 m (black/white + light bar + decals). Never a single
+// rounded box with a windshield stripe.
 
 import { makePoliceDecalTexture } from './brands.js';
 
@@ -50,7 +49,7 @@ export function buildCar(cls, colorOverride) {
   lower.position.y = H / 2 + 0.28;
   lower.castShadow = true;
   g.add(lower);
-  // Hood: a sloped wedge at the front (a rotated thin box reads as a slope).
+  // Hood: a sloped wedge at the front.
   const hood = new THREE.Mesh(new THREE.BoxGeometry(W * 0.94, 0.1, L * 0.22), bodyMat);
   hood.position.set(0, H + 0.24, L * 0.36);
   hood.rotation.x = -0.12;
@@ -91,7 +90,24 @@ export function buildCar(cls, colorOverride) {
   grille.position.set(0, H * 0.55, L / 2 + 0.01);
   g.add(grille);
 
-  // Wheels: front pair steers, all four spin. Exposed for the driver.
+  // Hero rear, seen dead-behind from the chase camera: band the flat
+  // rear with a dark fascia, a full-width taillight bar and a defined
+  // rear window, so it reads as a car, not a pink slab.
+  if (cls === 'hero') {
+    const fascia = new THREE.Mesh(new THREE.BoxGeometry(W * 0.94, 0.3, 0.05), std(0x1c1e22));
+    fascia.position.set(0, 0.45, -L / 2 - 0.01);
+    g.add(fascia);
+    const lightBar = new THREE.Mesh(new THREE.BoxGeometry(W * 0.86, 0.22, 0.05),
+      new THREE.MeshBasicMaterial({ color: 0xc01010, fog: false }));
+    lightBar.position.set(0, H + 0.15, -L / 2 - 0.03);
+    g.add(lightBar);
+    const rearGlass = new THREE.Mesh(new THREE.BoxGeometry(W * 0.66, 0.38, 0.03),
+      new THREE.MeshBasicMaterial({ color: 0x5a7a9a, fog: false }));
+    rearGlass.position.set(0, H + 0.5, cabZ - cabLen / 2 - 0.01);
+    g.add(rearGlass);
+  }
+
+  // Wheels: front pair steers, all four spin.
   const wheels = [];
   const wr = isVan ? 0.38 : 0.34;
   const wy = wr;
@@ -141,7 +157,7 @@ export function buildCar(cls, colorOverride) {
       decal.rotation.y = side * Math.PI / 2;
       g.add(decal);
     }
-    // Light bar: red + blue blocks, flashing via emissive swap in police.js.
+    // Light bar: red + blue blocks (flash in police.js).
     const bar = new THREE.Group();
     const baseBar = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.09, 0.28), std(0x1c1e22));
     const red = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.16, 0.26),
@@ -166,7 +182,6 @@ export function buildCar(cls, colorOverride) {
   return g;
 }
 
-// Spin + steer the wheels for a moving car.
 export function driveWheels(car, speed, steerAngle, dt) {
   const wheels = car.userData.wheels || [];
   const wr = 0.34;
