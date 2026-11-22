@@ -6,9 +6,9 @@
 // COLINAS, and every building is aligned to its block.
 //
 // Archetypes: tower (glass curtain wall + setbacks), deco (pastel Art
-// Deco + stepped parapet + awning), warehouse (corrugated + big door +
-// sawtooth roof), marketRow (shopfront + balconies), villa (pitched roof
-// + garden wall). Each build returns its collision AABB.
+// Deco + stepped parapet + awning), warehouse (corrugated + big door),
+// marketRow (shopfront + balconies), villa (pitched roof + garden
+// wall). Each build returns its collision AABB.
 
 import { DISTRICTS } from './palette.js';
 import { AVENUES, STREETS, ROAD_W, WALK_W, districtAt } from './cityplan.js';
