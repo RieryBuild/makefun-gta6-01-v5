@@ -1,17 +1,12 @@
 // The game — the state machine and the main loop. States: title,
-// playing, paused, map, wasted, busted. The loop updates the player,
-// the world (traffic, crowd), the police, the enemies, the story, the
-// collectibles, and the HUD, in that order. Missions auto-start in
-// sequence (GTA-style: the next job comes to you after the last one
-// pays out); BUSTED/WASTED cost 10% of cash (min $100) and respawn at
-// the police station / hospital. Autosave runs every 30 s and on every
-// mission pass. Everything the play-test asserts goes through the
-// `window.__pds` hooks at the bottom.
+// playing, paused, map, wasted, busted. Missions auto-start in
+// sequence; BUSTED/WASTED cost 10% of cash (min $100). Autosave runs
+// every 30 s and on every mission pass. Play-test hooks: window.__pds.
 
 import { createWorld } from './world.js';
 import { Controls } from './controls.js';
 import { Sound } from './sound.js';
-import { Growth, SHELL_SPOTS, STASH_SPOTS } from './growth.js';
+import { Growth, SHELL_SPOTS, STASH_SPOTS, nextRank } from './growth.js';
 import { Story, buildBeacon, MISSIONS } from './story.js';
 import { Player } from './player.js';
 import { Enemies } from './enemies.js';
@@ -95,7 +90,7 @@ export class Game {
   wire() {
     // Story hooks.
     this.story.hooks.onMissionStart = (m) => {
-      this.hud.showMissionCard(m.name, CAST[m.giver].call + ' · ' + m.brief);
+      this.hud.showMissionCard(m.name, CAST[m.giver].call + ' · ' + m.brief, 3000, undefined, m.stages[1] && m.stages[1].text);
       this.hud.showSubtitle(m.giver, CAST[m.giver].lines.start);
       this.hud.showObjective(this.story.currentStage.text, '#ffd700');
       this.sound.jingle();
@@ -122,8 +117,7 @@ export class Game {
       this.growth.stats.missionsDone++;
       // Mission rewards name their unlock in display case ('Pistol',
       // 'SMG', 'Rifle', 'Armour'); the unlocked set holds lowercase
-      // weapon keys only. Fold the case here so a future mission
-      // written as 'RIFLE' still pays its reward.
+      // weapon keys only. Fold the case here.
       const rewardKey = String(m.unlock || '').toLowerCase();
       if (rewardKey === 'armour') this.player.armor = 100;
       else if (rewardKey !== 'fists' && Object.hasOwn(WEAPONS, rewardKey)) this.growth.unlocked.add(rewardKey);
@@ -208,8 +202,8 @@ export class Game {
     this.beacon.position.set(t.x, 0, t.z);
   }
 
-  // The title panorama: Ro beside the hero car on the beachfront, the
-  // Ferris wheel behind — the camera orbits slowly.
+  // The title panorama: Ro beside the hero car on the beachfront,
+  // the Ferris wheel behind — the camera orbits slowly.
   stageTitleScene() {
     this.player.mesh.position.set(-52, 0, 152);
     // Face the camera: the title orbit starts south of the car looking
@@ -245,8 +239,8 @@ export class Game {
     this.player.mesh.position.set(-60, 0, 148);
     this.player.mesh.visible = true;
     this.player.driving = null;
-    // Reset staging knobs to play defaults: staging sets them AFTER
-    // calling newGame(), so a fresh game never inherits a staged value.
+    // Reset staging knobs to play defaults (staging sets them after
+    // newGame(), so a fresh game never inherits a staged value).
     this.cam.distScale = 1;
     this.cam.drivePitch = 0.22;
     this.player.ramKeepsSpeed = false;
@@ -273,8 +267,7 @@ export class Game {
     if (s.pos) this.player.mesh.position.set(s.pos.x, 0, s.pos.z);
     this.world.collectibles.restore(new Set(s.growth?.shells || []), new Set(s.growth?.stashes || []));
     // Same staging-knob reset as newGame: a continued game must not
-    // inherit a staged value either (e.g. Continue pressed after a
-    // ?shot= staging URL set them).
+    // inherit a staged value (e.g. Continue after a ?shot= URL set them).
     this.cam.distScale = 1;
     this.cam.drivePitch = 0.22;
     this.player.ramKeepsSpeed = false;
@@ -383,9 +376,9 @@ export class Game {
     this.t += dt;
     if (this.state === 'playing') this.updatePlaying(dt);
     else if (this.state === 'title') this.updateTitle(dt);
-    // Debug hook for the logic play-test: SwiftShader renders this
-    // scene at ~0.3 fps, so the harness sets noRender to run game time
-    // at full speed while it drives the systems. Default off.
+    // Debug hook for the logic play-test: SwiftShader renders at
+    // ~0.3 fps, so the harness sets noRender to run game time at full
+    // speed while it drives the systems. Default off.
     if (!this.noRender) this.world.render();
     this.controls.endFrame();
   }
@@ -481,6 +474,9 @@ export class Game {
       carName: this.player.driving?.spec.name,
       carCond: this.player.driving ? this.player.driving.condition / 100 : 0,
       rank: this.growth.rank.name, rep: this.growth.rep,
+      repNext: (nextRank(this.growth.rep) || {}).at ?? null,
+      stageT: this.story.stageT,
+      inSight: this.world.police.inContact,
       district: this.district,
       day: 1 + Math.floor(this.dayMin / 1440),
       time: `${String(Math.floor((this.dayMin % 1440) / 60)).padStart(2, '0')}:${String(Math.floor(this.dayMin % 60)).padStart(2, '0')}`,
