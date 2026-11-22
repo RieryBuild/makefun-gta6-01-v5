@@ -49,6 +49,11 @@ export class Hud {
     this.slotsCtx = this.slotsEl?.getContext('2d') || null;
     this.locationEl = el('hud-location');
     this.timerEl = el('hud-timer');
+    this.insightEl = el('hud-insight');
+    this.crewChipEl = el('hud-crewchip');
+    this.popup2El = el('hud-popup2');
+    this.numHealthEl = el('num-health');
+    this.numArmorEl = el('num-armor');
     this.timers = {};
     this.flashDamageUntil = 0;
     this.portraits = {};
@@ -197,6 +202,17 @@ export class Hud {
     this.armorEl.style.width = Math.max(0, armor) + '%';
     this.armorEl.parentElement.style.visibility = armor > 0 ? 'visible' : 'hidden';
     this.repEl.style.width = Math.max(0, Math.min(100, repFrac * 100)) + '%';
+    // Bare numbers on the bars: the bar shows the share, the number
+    // the value (top-5 covers carry both).
+    if (this.numHealthEl) this.numHealthEl.textContent = Math.round(Math.max(0, health));
+    if (this.numArmorEl) this.numArmorEl.textContent = Math.round(Math.max(0, armor));
+  }
+
+  // Wanted state: a red pill while a unit has contact (cruiser <45 m
+  // or the heli overhead) — the "IN SIGHT" of the top-5 covers.
+  setInSight(on) {
+    if (!this.insightEl) return;
+    this.insightEl.style.visibility = on ? 'visible' : 'hidden';
   }
 
   // Weapon silhouette shapes, drawn at offset (ox, oy) and scale s —
@@ -287,11 +303,14 @@ export class Hud {
     if (b) b.style.width = `${Math.round(condFrac * 100)}%`;
   }
 
-  // REP rank label under the radar REP bar, with the bare REP number
-  // (e.g. RUNNER · 500 REP) — a rank is a name plus a number.
-  setRepLabel(rank, rep) {
+  // REP rank label under the radar REP bar: rank + progress numbers
+  // (e.g. RUNNER · 500/800 REP) — the bar shows the share, the label
+  // the value and the next rank's threshold.
+  setRepLabel(rank, rep, repNext) {
     if (!rank) return;
-    const text = rep != null ? `${rank} · ${rep} REP` : rank;
+    const text = rep != null
+      ? (repNext != null ? `${rank} · ${rep}/${repNext} REP` : `${rank} · ${rep} REP`)
+      : rank;
     if (this.repLabelEl.textContent !== text) this.repLabelEl.textContent = text;
   }
 
@@ -340,6 +359,14 @@ export class Hud {
     const portrait = c ? `<img src="${this.portraits[speakerId]}" alt="">` : '';
     const name = c ? `<b style="color:${c.bg === '#7a2e3e' ? '#ff9a8a' : '#ffd27a'}">${c.call}:</b> ` : '';
     this.transient(this.subtitleEl, `${portrait}<span>${name}${text}</span>`, ms, 'sub');
+    // Crew chip beside the dialog: the speaker's portrait + name +
+    // role, on the same timer as the subtitle (one small chip, like
+    // the top-5 covers' crew chips).
+    if (c && this.crewChipEl) {
+      this.transient(this.crewChipEl,
+        `<img src="${this.portraits[speakerId]}" alt=""><span><b>${c.call.toUpperCase()}</b> · ${c.role.toUpperCase()}</span>`,
+        ms, 'crew');
+    }
   }
 
   showNameCard(name, sub) {
@@ -356,13 +383,36 @@ export class Hud {
     this.transient(this.popupEl, `<span style="color:${color}">${text}</span>`, ms, 'pop');
   }
 
+  // Second driving-score popup, stacked under the first (e.g. DRIFT
+  // under NEAR MISS) — the game's real drift string, same pattern.
+  showPopup2(text, color = '#f5c518', ms = 2000) {
+    if (!this.popup2El) return;
+    this.transient(this.popup2El, `<span style="color:${color}">${text}</span>`, ms, 'pop2');
+  }
+
+  // Stage timer (M:SS, counts up from the stage start), rendered in
+  // the mission card next to the title — the top-5 covers carry their
+  // timer in the mission cluster. Updated every frame; the span only
+  // exists while a mission card is up.
+  setStageTimer(t) {
+    const s = el('hud-stagetimer');
+    if (!s) return;
+    const m = Math.floor(t / 60), sec = Math.floor(t % 60);
+    const text = `${m}:${String(sec).padStart(2, '0')}`;
+    if (s.textContent !== text) s.textContent = text;
+  }
+
   // pos 'corner' docks the card top-left at a smaller size, so a
   // staged chase frame can show the mission brief without the centred
   // card covering the pursuit. Live play always uses the centred card.
-  showMissionCard(title, sub, ms = 3000, pos) {
+  // `next` is the following stage's objective, one line under the
+  // stage line (the top-5 covers' NEXT line); the timer span is filled
+  // per-frame by setStageTimer while the card is up.
+  showMissionCard(title, sub, ms = 3000, pos, next) {
     this.missionCardEl.classList.toggle('corner', pos === 'corner');
+    const nextHtml = next ? `<div class="mc-next">NEXT › ${next}</div>` : '';
     this.transient(this.missionCardEl,
-      `<div class="mc-title">${title}</div><div class="mc-sub">${sub}</div>`, ms, 'mc');
+      `<div class="mc-title">${title} <span class="mc-timer" id="hud-stagetimer"></span></div><div class="mc-sub">${sub}</div>${nextHtml}`, ms, 'mc');
   }
 
   hideMissionCard() {
@@ -406,8 +456,10 @@ export class Hud {
     this.setAmmo(state.mag, state.reserve, !isFinite(w.mag));
     this.setSpeed(state.speedKmh, state.driving);
     this.setCarName(state.carName, state.carCond, state.driving);
-    this.setRepLabel(state.rank, state.rep);
+    this.setRepLabel(state.rank, state.rep, state.repNext);
     this.setLocation(state.district, state.day, state.time);
     this.setTimer(state.raceT);
+    this.setStageTimer(state.stageT || 0);
+    this.setInSight(!!state.inSight);
   }
 }
