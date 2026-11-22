@@ -11,12 +11,12 @@
 <body>
 <canvas id="game"></canvas>
 
-<!-- HUD: icon-first. Permanent elements are icons, bars, bare numbers.
-     Everything else is transient and fades. -->
+<!-- HUD: icon-first. Permanent elements are icons, bars, bare numbers; everything else is transient and fades. -->
 <div id="hud">
   <div id="hud-top-right">
     <div id="hud-money">$0</div>
     <div id="hud-stars"></div>
+    <div id="hud-insight" style="visibility:hidden"><span class="in-dot"></span>IN SIGHT</div>
     <div id="hud-timer" style="visibility:hidden"></div>
   </div>
 
@@ -24,8 +24,8 @@
     <div id="hud-location"></div>
     <canvas id="radar" width="160" height="160"></canvas>
     <div class="bars">
-      <div class="bar"><div id="bar-health" class="fill health"></div></div>
-      <div class="bar"><div id="bar-armor" class="fill armor"></div></div>
+      <div class="bar-row"><div class="bar"><div id="bar-health" class="fill health"></div></div><span class="bar-num" id="num-health">100</span></div>
+      <div class="bar-row"><div class="bar"><div id="bar-armor" class="fill armor"></div></div><span class="bar-num" id="num-armor">0</span></div>
       <div class="bar"><div id="bar-rep" class="fill rep"></div></div>
       <div id="hud-replabel"></div>
     </div>
@@ -44,9 +44,11 @@
   <div id="hud-objective" class="transient"></div>
   <div id="hud-help" class="transient"></div>
   <div id="hud-subtitle" class="transient"></div>
+  <div id="hud-crewchip" class="transient"></div>
   <div id="hud-namecard" class="transient"></div>
   <div id="hud-radio" class="transient"></div>
   <div id="hud-popup" class="transient"></div>
+  <div id="hud-popup2" class="transient"></div>
   <div id="hud-repfloat" class="transient"></div>
   <div id="hud-missioncard" class="transient"></div>
   <div id="hud-bigcard" class="transient"></div>
