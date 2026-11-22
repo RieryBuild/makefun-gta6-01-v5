@@ -2,12 +2,10 @@
 // no flat-color architecture anywhere (house rule §5). All textures are
 // generated at boot from the palette, so the game ships zero image assets.
 //
-// THE RECTANGLE RULE (v4's surviving defect): every billboard texture
-// (cloud, glow, flash, smoke) MUST fade to alpha 0 at ALL edges via a
-// radial gradient, and its material MUST use depthWrite:false. A hard
-// alpha edge on a quad reads as a floating translucent rectangle,
-// especially against dark backgrounds. makeGlowTexture is the only
-// sanctioned glow source — nothing else builds a billboard texture.
+// THE RECTANGLE RULE: billboard textures (cloud, glow, flash, smoke)
+// MUST fade to alpha 0 at ALL edges (radial gradient) with
+// depthWrite:false, or a hard edge reads as a floating rectangle.
+// makeGlowTexture is the only sanctioned glow source.
 
 import { Rng, hashStr } from './rng.js';
 
