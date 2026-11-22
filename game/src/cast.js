@@ -1,12 +1,7 @@
-// The cast of PUERTO DEL SOL — named characters with roles, portraits,
-// and dialogue in-frame (every top-5 entry has this; identity matters
-// as much as polygons). Each entry carries the 3D spec (humanoid.js),
-// the 2D portrait spec (facekit.js), and their mission dialogue lines.
-//
-// The story: Rosa "Ro" Delgado, a getaway driver who walked away from
-// the life three years ago, is pulled back when her brother's garage
-// debt lands on Dario Venn's books. Eight jobs to buy the garage back
-// — and to burn Venn's operation down on the way out.
+// The cast — named characters with roles, portraits, and dialogue
+// in-frame (every top-5 entry has this; identity matters as much as
+// polygons). Each entry carries the 3D spec (humanoid.js), the 2D
+// portrait spec (facekit.js), and mission dialogue lines.
 
 import { SKIN, HAIR } from './palette.js';
 
