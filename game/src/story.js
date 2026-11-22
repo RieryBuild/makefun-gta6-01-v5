@@ -136,6 +136,7 @@ export class Story {
     this.current = null;         // active mission object
     this.stageIdx = 0;
     this.stageState = null;      // per-stage runtime state
+    this.stageT = 0;             // game-s since the current stage began
     this.raceT = 0;
     this.killsLeft = 0;
     this.hooks = {};             // wired by game.js
@@ -175,6 +176,7 @@ export class Story {
   beginStage() {
     const s = this.currentStage;
     this.stageState = { cp: 0 };
+    this.stageT = 0;
     if (!s) return;
     if (s.type === 'kill') {
       this.killsLeft = s.count;
@@ -230,6 +232,7 @@ export class Story {
   update(dt, ctx) {
     const s = this.currentStage;
     if (!s) return;
+    this.stageT += dt;
     const { playerPos, wanted, driving } = ctx;
     if (s.type === 'goto' || s.type === 'deliver') {
       const t = this.stageTarget();
