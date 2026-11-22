@@ -22,23 +22,25 @@ export function stageShot(game, name, seed = 1) {
   // the subtitle. mc = corner mission card, radio = station pill,
   // big = MISSION PASSED card — all optional per shot.
   let shotHud = null;
-  const stageHud = (obj, sub, mc, radio, big, pop) => {
-    shotHud = { obj, sub, mc, radio, big, pop };
+  const stageHud = (obj, sub, mc, radio, big, pop, pop2) => {
+    shotHud = { obj, sub, mc, radio, big, pop, pop2 };
     if (obj) hud.showObjective(obj.text, obj.color);
     if (sub) hud.showSubtitle(sub.speaker, sub.text);
-    if (mc) hud.showMissionCard(mc.title, mc.sub, 120000, 'corner');
+    if (mc) hud.showMissionCard(mc.title, mc.sub, 120000, 'corner', mc.next);
     if (radio) hud.showRadio(radio.station, radio.track, 120000);
     if (big) hud.showBigCard(big, 120000);
     if (pop) hud.showPopup(pop.text, pop.color, 120000);
+    if (pop2) hud.showPopup2(pop2.text, pop2.color, 120000);
   };
   const ready = () => {
     setTimeout(() => {
       if (shotHud?.obj) hud.showObjective(shotHud.obj.text, shotHud.obj.color, 120000);
       if (shotHud?.sub) hud.showSubtitle(shotHud.sub.speaker, shotHud.sub.text, 120000);
-      if (shotHud?.mc) hud.showMissionCard(shotHud.mc.title, shotHud.mc.sub, 120000, 'corner');
+      if (shotHud?.mc) hud.showMissionCard(shotHud.mc.title, shotHud.mc.sub, 120000, 'corner', shotHud.mc.next);
       if (shotHud?.radio) hud.showRadio(shotHud.radio.station, shotHud.radio.track, 120000);
       if (shotHud?.big) hud.showBigCard(shotHud.big, 120000);
       if (shotHud?.pop) hud.showPopup(shotHud.pop.text, shotHud.pop.color, 120000);
+      if (shotHud?.pop2) hud.showPopup2(shotHud.pop2.text, shotHud.pop2.color, 120000);
       window.__shotReady = true;
     }, 1400);
   };
@@ -116,13 +118,19 @@ export function stageShot(game, name, seed = 1) {
     // pulled both onto the hero's line by t=0.62 (diag v5: x -39.6 /
     // -39.4, NDC x 0.02 / 0.04) — dead behind the hero car from the
     // chase camera, invisible. So the flank pair now holds ESCORT
-    // formation (police.js): fixed slots ±5 m lateral, 8 m ahead, speed
-    // matched to the player — they stay visibly adjacent at the frame
-    // edges for the whole capture window, outside the 3.2 m collision
-    // radius, never touching the car. Two hold the road ahead.
+    // formation (police.js): fixed slots beside the player — they stay
+    // visibly adjacent at the frame edges for the whole capture window,
+    // outside the 3.2 m collision radius, never touching the car. r8
+    // held them 8 m ahead at the front quarters, where they read as
+    // traffic ahead; r9-v1 pulled them to the hero's REAR quarters
+    // (±4.2 m lateral, 1 m ahead) — but 7 m from the chase camera they
+    // dwarfed the hero car as black slabs. r9-v2 holds them a step
+    // further out and back (±5 m lateral, 4 m ahead — ~6.4 m from the
+    // hero's centre): still ramming contact at the quarter, but a
+    // third smaller on screen. Two hold the road ahead.
     const slots = [
-      { x: cx - 5, z: cz - 8, speed: 26, escort: { lat: 5, ahead: 8 } },
-      { x: cx + 5, z: cz - 8, speed: 26, escort: { lat: -5, ahead: 8 } },
+      { x: cx - 5, z: cz - 4, speed: 26, escort: { lat: 5, ahead: 4 } },
+      { x: cx + 5, z: cz - 4, speed: 26, escort: { lat: -5, ahead: 4 } },
       { x: cx - 3, z: cz - 24, speed: 22 },
       { x: cx + 3.5, z: cz - 30, speed: 22 },
     ];
@@ -216,13 +224,21 @@ export function stageShot(game, name, seed = 1) {
     // card carries the brief, so the top-left stays a single element.
     // The popup is the game's real NEAR MISS string (player.js), shown
     // at capture by the same re-show pattern as the card + subtitle.
+    // The second popup is the game's real DRIFT string (chain 1,
+    // +$150, player.js) — same pattern, stacked under the first.
+    // The stage timer is staged mid-stage (47 s, same class as the
+    // staged cash/REP/health: the capture is a mid-chase moment, and
+    // the timer keeps counting live from there); the NEXT line is the
+    // real stage-2 text from the story machine.
+    game.story.stageT = 47;
     stageHud(
       null,
       { speaker: 'teo', text: CAST.teo.lines.chase },
-      { title: 'JOB 1/8 · FIRST LIGHT', sub: 'STAGE 1/2 · Get to the garage — lose the heat' },
+      { title: 'JOB 1/8 · FIRST LIGHT', sub: 'STAGE 1/2 · Get to the garage — lose the heat', next: game.story.current.stages[1].text },
       { station: game.sound.station, track: game.sound.station.show },
       null,
       { text: 'NEAR MISS  +$250', color: '#2ecc71' },
+      { text: 'DRIFT x1  +$150', color: '#f5c518' },
     );
     ready();
     return;
