@@ -6,8 +6,8 @@
 // Limbs are tapered CAPSULES with sphere joints — rounded primitives,
 // never boxes. The face is a canvas texture on a curved patch hugging
 // the head sphere (facekit.js), so the eyes and expression read at
-// screenshot distance. Outfits are colour-separated: jacket / shirt /
-// pants / shoes are distinct parts, not one painted box.
+// screenshot distance. Outfits are colour-separated parts, not one
+// painted box.
 //
 // Poses are joint rotations: idle, walk, run, drive (seated, hands to
 // the wheel), aim (TWO-HANDED — rifle shouldered, both hands on the
