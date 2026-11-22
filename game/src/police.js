@@ -32,6 +32,7 @@ export class Police {
     this.roadblockDist = 60;
     this.heli = null;
     this.hiddenT = 0;      // time since any unit last had contact
+    this.contact = false;  // a unit is on the player right now (IN SIGHT)
     this.decayT = 0;
     this.bustT = 0;
     this.searchRadius = 60;
@@ -208,6 +209,7 @@ export class Police {
       if (c.mesh.position.distanceTo(pp) < 45) { contact = true; break; }
     }
     if (this.heli) contact = true;
+    this.contact = contact;
     if (contact) {
       this.hiddenT = 0;
       this.decayT = 0;
@@ -366,4 +368,7 @@ export class Police {
   }
 
   get searchActive() { return this.wanted > 0 && this.hiddenT > 0.5; }
+
+  // IN SIGHT: a unit has contact (cruiser <45 m or the heli overhead).
+  get inContact() { return this.wanted > 0 && this.contact; }
 }
